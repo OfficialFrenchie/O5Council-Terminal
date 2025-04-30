@@ -1,1 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>O5 Council Terminal</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      background-color: #000;
+      color: #0f0;
+      font-family: 'Courier New', Courier, monospace;
+      padding: 20px;
+      margin: 0;
+      overflow-x: hidden;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      background-color: #111;
+      padding: 10px 20px;
+      border-bottom: 2px solid #0f0;
+    }
+
+    header img {
+      height: 60px;
+      filter: grayscale(100%) brightness(0.8);
+    }
+
+    .glitch-text {
+      font-size: 1.2em;
+      position: relative;
+      color: #0f0;
+      text-shadow: 1px 0 red, -1px 0 blue;
+      animation: glitch 1s infinite;
+    }
+
+    @keyframes glitch {
+      0% { text-shadow: 2px 0 red, -2px 0 blue; }
+      20% { text-shadow: -2px 0 red, 2px 0 blue; }
+      40% { text-shadow: 2px 0 red, -2px 0 blue; }
+      60% { text-shadow: -1px 0 red, 1px 0 blue; }
+      80% { text-shadow: 1px 0 red, -1px 0 blue; }
+      100% { text-shadow: 2px 0 red, -2px 0 blue; }
+    }
+
+    .terminal {
+      max-width: 800px;
+      margin: auto;
+      white-space: pre-wrap;
+      padding-top: 30px;
+    }
+
+    .typed-line {
+      border-right: 2px solid #0f0;
+      animation: blink 1s steps(1) infinite;
+    }
+
+    @keyframes blink {
+      50% {
+        border-color: transparent;
+      }
+    }
+
+    .redacted {
+      background-color: #f00;
+      color: #f00;
+      padding: 0 4px;
+      margin: 0 2px;
+    }
+
+    .document {
+      margin-top: 30px;
+    }
+
+    .login {
+      margin-bottom: 20px;
+    }
+
+    button {
+      background-color: #111;
+      color: #0f0;
+      border: 1px solid #0f0;
+      padding: 5px 10px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #0f0;
+      color: #000;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/SCP_Foundation_%28emblem%29.svg/1200px-SCP_Foundation_%28emblem%29.svg.png" alt="SCP Logo">
+    <div class="glitch-text">SCP Foundation – Site Excalibur : O5 Council Terminal</div>
+  </header>
+
+  <div class="terminal">
+    <div class="login">
+      <p>Initializing secure SCP O5 Council Terminal...</p>
+      <p>Clearance Level: <strong>LEVEL 5</strong> - <span class="redacted">O5</span></p>
+      <p>Enter Credentials: <span class="typed-line" id="login-line"></span></p>
+    </div>
+
+    <div class="document" id="document" style="display: none;">
+      <p>ACCESS GRANTED.</p>
+      <p>Loading file: <strong>O5-█.scpd</strong>...</p>
+    </div>
+  </div>
+
+  <script>
+    const loginText = "***************";
+    let index = 0;
+
+    function typeLogin() {
+      const line = document.getElementById('login-line');
+      if (index < loginText.length) {
+        line.textContent += loginText[index++];
+        setTimeout(typeLogin, 100);
+      } else {
+        document.getElementById('document').style.display = 'block';
+      }
+    }
+
+    window.onload = typeLogin;
+  </script>
+</body>
+</html>
 
