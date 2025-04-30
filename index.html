@@ -2,16 +2,20 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>O5 Council Terminal</title>
+  <title>SCP O5 Council Terminal</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
     body {
       background-color: #000;
       color: #0f0;
       font-family: 'Courier New', Courier, monospace;
-      padding: 20px;
-      margin: 0;
-      overflow-x: hidden;
+      overflow: hidden;
     }
 
     header {
@@ -37,19 +41,30 @@
     }
 
     @keyframes glitch {
-      0% { text-shadow: 2px 0 red, -2px 0 blue; }
-      20% { text-shadow: -2px 0 red, 2px 0 blue; }
-      40% { text-shadow: 2px 0 red, -2px 0 blue; }
-      60% { text-shadow: -1px 0 red, 1px 0 blue; }
-      80% { text-shadow: 1px 0 red, -1px 0 blue; }
-      100% { text-shadow: 2px 0 red, -2px 0 blue; }
+      0%, 100% { text-shadow: 2px 0 red, -2px 0 blue; }
+      50% { text-shadow: -2px 0 red, 2px 0 blue; }
     }
 
     .terminal {
-      max-width: 800px;
+      max-width: 900px;
+      height: calc(100vh - 90px);
       margin: auto;
+      padding: 20px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+    }
+
+    .terminal-output {
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+    }
+
+    .line {
       white-space: pre-wrap;
-      padding-top: 30px;
     }
 
     .typed-line {
@@ -63,71 +78,141 @@
       }
     }
 
-    .redacted {
-      background-color: #f00;
-      color: #f00;
-      padding: 0 4px;
-      margin: 0 2px;
+    .input-line::before {
+      content: "> ";
     }
 
-    .document {
-      margin-top: 30px;
-    }
-
-    .login {
-      margin-bottom: 20px;
-    }
-
-    button {
-      background-color: #111;
-      color: #0f0;
-      border: 1px solid #0f0;
-      padding: 5px 10px;
-      cursor: pointer;
-    }
-
-    button:hover {
-      background-color: #0f0;
-      color: #000;
+    .hidden {
+      display: none;
     }
   </style>
 </head>
 <body>
-
   <header>
-    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/SCP_Foundation_%28emblem%29.svg/1200px-SCP_Foundation_%28emblem%29.svg.png" alt="SCP Logo">
+    <img src="https://cdn.discordapp.com/attachments/907049520309895189/1367284032513114243/image.png?ex=681405fc&is=6812b47c&hm=fb9e5a794eeb132782f292ef900e45235c97fdc8b70ece86c0564b3b0baf5445&" alt="SCP Logo">
     <div class="glitch-text">SCP Foundation – Site Excalibur : O5 Council Terminal</div>
   </header>
 
   <div class="terminal">
-    <div class="login">
-      <p>Initializing secure SCP O5 Council Terminal...</p>
-      <p>Clearance Level: <strong>LEVEL 5</strong> - <span class="redacted">O5</span></p>
-      <p>Enter Credentials: <span class="typed-line" id="login-line"></span></p>
+    <div class="terminal-output" id="terminal-output">
+      <div class="line" id="login-line">Enter Credentials: <span class="typed-line" id="typed"></span></div>
     </div>
-
-    <div class="document" id="document" style="display: none;">
-      <p>ACCESS GRANTED.</p>
-      <p>Loading file: <strong>O5-█.scpd</strong>...</p>
-    </div>
+    <div class="line input-line hidden" id="input-line"></div>
   </div>
 
   <script>
-    const loginText = "***************";
-    let index = 0;
+    const credentials = "████████████████";
+    const terminalOutput = document.getElementById('terminal-output');
+    const typedSpan = document.getElementById('typed');
+    const inputLine = document.getElementById('input-line');
+    const MAX_LINES = 18;
 
-    function typeLogin() {
-      const line = document.getElementById('login-line');
-      if (index < loginText.length) {
-        line.textContent += loginText[index++];
-        setTimeout(typeLogin, 100);
-      } else {
-        document.getElementById('document').style.display = 'block';
+    let charIndex = 0;
+
+    function addLine(text, delay = 0) {
+      setTimeout(() => {
+        const line = document.createElement('div');
+        line.className = 'line';
+        line.textContent = text;
+        terminalOutput.appendChild(line);
+        maintainBuffer();
+      }, delay);
+    }
+
+    function maintainBuffer() {
+      const lines = terminalOutput.querySelectorAll('.line');
+      if (lines.length > MAX_LINES) {
+        lines[0].remove();
       }
     }
 
-    window.onload = typeLogin;
+    function simulateTyping(text, speed = 150, callback) {
+      if (charIndex < text.length) {
+        typedSpan.textContent += text[charIndex++];
+        setTimeout(() => simulateTyping(text, speed, callback), speed);
+      } else {
+        callback && callback();
+      }
+    }
+
+    function clearTerminal() {
+      terminalOutput.innerHTML = '';
+    }
+
+    function runCommandInterface() {
+      let commandIndex = 0;
+
+      const commands = [
+        'Type "help" to list commands.',
+      ];
+
+      const commandMap = {
+        help: [
+          'Available Commands:',
+          ' - help         → List all available commands',
+          ' - list         → Display classified documents',
+          ' - access [id]  → Access a specific file (e.g., access O5-█)',
+          ' - logout       → Exit the terminal'
+        ],
+        list: [
+          'Secure Files:',
+          ' - O5-█.scpd',
+          ' - SiteEx-47-Report.txt',
+          ' - Event-BlackoutLog.docx'
+        ],
+        logout: ['Logging out...', 'Session terminated.']
+      };
+
+      const readline = () => {
+        inputLine.classList.remove('hidden');
+        inputLine.textContent = '> ';
+        let inputBuffer = '';
+
+        document.addEventListener('keydown', function onKey(e) {
+          if (e.key.length === 1 && inputBuffer.length < 40) {
+            inputBuffer += e.key;
+          } else if (e.key === 'Backspace') {
+            inputBuffer = inputBuffer.slice(0, -1);
+          } else if (e.key === 'Enter') {
+            document.removeEventListener('keydown', onKey);
+            inputLine.classList.add('hidden');
+            addLine(`> ${inputBuffer}`);
+
+            const cmd = inputBuffer.trim().split(' ')[0].toLowerCase();
+            const param = inputBuffer.trim().split(' ')[1];
+
+            if (commandMap[cmd]) {
+              commandMap[cmd].forEach((line, i) => addLine(line, i * 100));
+            } else if (cmd === 'access' && param) {
+              addLine(`Accessing file: ${param}...`);
+              addLine(`[REDACTED CONTENT - LEVEL 5 REQUIRED]`, 500);
+            } else {
+              addLine('Unknown command. Type "help" for assistance.');
+            }
+
+            setTimeout(() => readline(), 1000);
+          }
+
+          inputLine.textContent = `> ${inputBuffer}`;
+        });
+      };
+
+      commands.forEach((cmd, i) => addLine(cmd, i * 300));
+      setTimeout(readline, 1500);
+    }
+
+    // Start login sequence
+    simulateTyping(credentials, 200, () => {
+      setTimeout(() => {
+        typedSpan.classList.remove('typed-line');
+        typedSpan.textContent = " ACCESS AUTHORIZED";
+        setTimeout(() => {
+          clearTerminal();
+          addLine("Welcome to SCP Terminal Node: Site Excalibur [O5 Access]");
+          runCommandInterface();
+        }, 2000);
+      }, 1000);
+    });
   </script>
 </body>
 </html>
-
