@@ -5,11 +5,7 @@
   <title>SCP O5 Council Terminal</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
 
     body {
       background-color: #000;
@@ -46,25 +42,27 @@
     }
 
     .terminal {
-      max-width: 900px;
       height: calc(100vh - 90px);
-      margin: auto;
+      display: flex;
+      justify-content: center;
+      align-items: center;
       padding: 20px;
       overflow: hidden;
-      display: flex;
-      flex-direction: column;
-      justify-content: flex-end;
     }
 
-    .terminal-output {
-      flex-grow: 1;
-      display: flex;
+    .boot-screen, .main-terminal {
+      display: none;
       flex-direction: column;
-      justify-content: flex-end;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+      height: 100%;
+      text-align: center;
     }
 
-    .line {
+    .boot-line, .main-line {
       white-space: pre-wrap;
+      margin: 2px 0;
     }
 
     .typed-line {
@@ -73,9 +71,17 @@
     }
 
     @keyframes blink {
-      50% {
-        border-color: transparent;
-      }
+      50% { border-color: transparent; }
+    }
+
+    .output-wrapper {
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      height: 100%;
+      width: 100%;
+      overflow: hidden;
+      padding: 0 20px;
     }
 
     .input-line::before {
@@ -83,7 +89,7 @@
     }
 
     .hidden {
-      display: none;
+      display: none !important;
     }
   </style>
 </head>
@@ -94,25 +100,95 @@
   </header>
 
   <div class="terminal">
-    <div class="terminal-output" id="terminal-output">
-      <div class="line" id="login-line">Enter Credentials: <span class="typed-line" id="typed"></span></div>
+    <!-- Booting/Login screen -->
+    <div class="boot-screen" id="boot-screen">
+      <!-- Boot sequence lines added via JS -->
     </div>
-    <div class="line input-line hidden" id="input-line"></div>
+
+    <!-- Main terminal -->
+    <div class="main-terminal hidden" id="main-terminal">
+      <div class="output-wrapper" id="terminal-output">
+        <div class="main-line input-line hidden" id="input-line"></div>
+      </div>
+    </div>
   </div>
 
   <script>
-    const credentials = "████████████████";
-    const terminalOutput = document.getElementById('terminal-output');
-    const typedSpan = document.getElementById('typed');
-    const inputLine = document.getElementById('input-line');
+    const bootScreen = document.getElementById("boot-screen");
+    const mainTerminal = document.getElementById("main-terminal");
+    const terminalOutput = document.getElementById("terminal-output");
+    const inputLine = document.getElementById("input-line");
     const MAX_LINES = 18;
 
+    const bootSequence = [
+      "Initializing SCP SecureOS...",
+      "Routing access through Foundation net...",
+      "Bypassing Site-Excalibur lockdown protocols...",
+      "Loading secure shell instance...",
+      "Fetching O5 clearance modules...",
+      "Decrypting access key...",
+      "LOGIN REQUIRED:",
+      "Enter Credentials: "
+    ];
+
+    let bootIndex = 0;
     let charIndex = 0;
+    let credentials = "████████████████";
+    let typedSpan;
+
+    function showBootLine(text, isFinal = false) {
+      const line = document.createElement("div");
+      line.className = "boot-line";
+      if (isFinal) {
+        line.innerHTML = `${text}<span class="typed-line" id="typed"></span>`;
+        typedSpan = document.getElementById("typed");
+      } else {
+        line.textContent = text;
+      }
+      bootScreen.appendChild(line);
+    }
+
+    function simulateBootSequence() {
+      bootScreen.style.display = "flex";
+      const interval = setInterval(() => {
+        if (bootIndex < bootSequence.length - 1) {
+          showBootLine(bootSequence[bootIndex++]);
+        } else {
+          clearInterval(interval);
+          setTimeout(() => {
+            showBootLine(bootSequence[bootIndex], true);
+            simulateTyping();
+          }, 500);
+        }
+      }, 600);
+    }
+
+    function simulateTyping() {
+      if (charIndex < credentials.length) {
+        typedSpan.textContent += credentials[charIndex++];
+        setTimeout(simulateTyping, 250);
+      } else {
+        setTimeout(() => {
+          const authLine = document.createElement("div");
+          authLine.className = "boot-line";
+          authLine.textContent = "ACCESS AUTHORIZED";
+          bootScreen.appendChild(authLine);
+          setTimeout(() => transitionToMainTerminal(), 1500);
+        }, 500);
+      }
+    }
+
+    function transitionToMainTerminal() {
+      bootScreen.classList.add("hidden");
+      mainTerminal.classList.remove("hidden");
+      addLine("Welcome to SCP Terminal Node: Site Excalibur [O5 Access]");
+      runCommandInterface();
+    }
 
     function addLine(text, delay = 0) {
       setTimeout(() => {
         const line = document.createElement('div');
-        line.className = 'line';
+        line.className = 'main-line';
         line.textContent = text;
         terminalOutput.appendChild(line);
         maintainBuffer();
@@ -120,32 +196,13 @@
     }
 
     function maintainBuffer() {
-      const lines = terminalOutput.querySelectorAll('.line');
+      const lines = terminalOutput.querySelectorAll('.main-line');
       if (lines.length > MAX_LINES) {
         lines[0].remove();
       }
     }
 
-    function simulateTyping(text, speed = 150, callback) {
-      if (charIndex < text.length) {
-        typedSpan.textContent += text[charIndex++];
-        setTimeout(() => simulateTyping(text, speed, callback), speed);
-      } else {
-        callback && callback();
-      }
-    }
-
-    function clearTerminal() {
-      terminalOutput.innerHTML = '';
-    }
-
     function runCommandInterface() {
-      let commandIndex = 0;
-
-      const commands = [
-        'Type "help" to list commands.',
-      ];
-
       const commandMap = {
         help: [
           'Available Commands:',
@@ -197,22 +254,14 @@
         });
       };
 
-      commands.forEach((cmd, i) => addLine(cmd, i * 300));
-      setTimeout(readline, 1500);
+      setTimeout(() => {
+        addLine('Type "help" to list commands.', 300);
+        setTimeout(() => readline(), 1000);
+      }, 500);
     }
 
-    // Start login sequence
-    simulateTyping(credentials, 200, () => {
-      setTimeout(() => {
-        typedSpan.classList.remove('typed-line');
-        typedSpan.textContent = " ACCESS AUTHORIZED";
-        setTimeout(() => {
-          clearTerminal();
-          addLine("Welcome to SCP Terminal Node: Site Excalibur [O5 Access]");
-          runCommandInterface();
-        }, 2000);
-      }, 1000);
-    });
+    // Begin boot sequence on page load
+    window.onload = simulateBootSequence;
   </script>
 </body>
 </html>
