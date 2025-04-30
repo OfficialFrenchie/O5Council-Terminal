@@ -102,12 +102,8 @@
   </header>
 
   <div class="terminal">
-    <!-- Booting/Login screen -->
-    <div class="boot-screen" id="boot-screen">
-      <!-- Boot sequence lines added via JS -->
-    </div>
+    <div class="boot-screen" id="boot-screen"></div>
 
-    <!-- Main terminal -->
     <div class="main-terminal hidden" id="main-terminal">
       <div class="output-wrapper" id="terminal-output">
         <div class="main-line input-line hidden" id="input-line"></div>
@@ -123,26 +119,26 @@
     const MAX_LINES = 18;
 
     const bootSequence = [
-      "Initializing SCP SecureOS...",
-      "Routing access through Foundation net...",
-      "Bypassing Site-Excalibur lockdown protocols...",
-      "Loading secure shell instance...",
-      "Fetching O5 clearance modules...",
-      "Decrypting access key...",
-      "LOGIN REQUIRED:",
-      "Enter Credentials: "
+      "[SCP FOUNDATION INTERNAL SYSTEM]",
+      "SITE: EXCALIBUR - TERMINAL NODE 05-SEC",
+      "Establishing secure uplink...",
+      "Verifying temporal encryption sync...",
+      "Council-level biometric handshake: VERIFIED",
+      "LOADING TERMINAL ENVIRONMENT...",
+      "Authentication Required:",
+      "Enter O5 Clearance Credentials:"
     ];
 
     let bootIndex = 0;
+    let credentials = "███-███-████-█"; // Simulated typed passcode
     let charIndex = 0;
-    let credentials = "████████████████";
     let typedSpan;
 
-    function showBootLine(text, isFinal = false) {
+    function showBootLine(text, withTyping = false) {
       const line = document.createElement("div");
       line.className = "boot-line";
-      if (isFinal) {
-        line.innerHTML = `${text}<span class="typed-line" id="typed"></span>`;
+      if (withTyping) {
+        line.innerHTML = `${text} <span class="typed-line" id="typed"></span>`;
         typedSpan = document.getElementById("typed");
       } else {
         line.textContent = text;
@@ -160,20 +156,20 @@
           setTimeout(() => {
             showBootLine(bootSequence[bootIndex], true);
             simulateTyping();
-          }, 500);
+          }, 600);
         }
-      }, 600);
+      }, 800);
     }
 
     function simulateTyping() {
       if (charIndex < credentials.length) {
         typedSpan.textContent += credentials[charIndex++];
-        setTimeout(simulateTyping, 250);
+        setTimeout(simulateTyping, 300);
       } else {
         setTimeout(() => {
           const authLine = document.createElement("div");
           authLine.className = "boot-line";
-          authLine.textContent = "ACCESS AUTHORIZED";
+          authLine.textContent = "ACCESS AUTHORIZED [O5-CNCL]";
           bootScreen.appendChild(authLine);
           setTimeout(() => transitionToMainTerminal(), 1500);
         }, 500);
@@ -262,7 +258,6 @@
       }, 500);
     }
 
-    // Begin boot sequence on page load
     window.onload = simulateBootSequence;
   </script>
 </body>
