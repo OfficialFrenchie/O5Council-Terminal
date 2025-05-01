@@ -126,54 +126,44 @@
       "Council-level biometric handshake: VERIFIED",
       "LOADING TERMINAL ENVIRONMENT...",
       "Authentication Required:",
-      "Enter O5 Clearance Credentials:"
+      "Enter O5 Clearance Credentials: ███-███-████-█"
     ];
 
     let bootIndex = 0;
-    let credentials = "███-███-████-█"; // Simulated typed passcode
-    let charIndex = 0;
-    let typedSpan;
 
-    function showBootLine(text, withTyping = false) {
-      const line = document.createElement("div");
+    function typeLine(text, index, callback) {
+      let line = document.createElement("div");
       line.className = "boot-line";
-      if (withTyping) {
-        line.innerHTML = `${text} <span class="typed-line" id="typed"></span>`;
-        typedSpan = document.getElementById("typed");
-      } else {
-        line.textContent = text;
-      }
       bootScreen.appendChild(line);
-    }
-
-    function simulateBootSequence() {
-      bootScreen.style.display = "flex";
-      const interval = setInterval(() => {
-        if (bootIndex < bootSequence.length - 1) {
-          showBootLine(bootSequence[bootIndex++]);
+      let i = 0;
+      function typeChar() {
+        if (i < text.length) {
+          line.textContent += text[i++];
+          setTimeout(typeChar, 35);
         } else {
-          clearInterval(interval);
-          setTimeout(() => {
-            showBootLine(bootSequence[bootIndex], true);
-            simulateTyping();
-          }, 600);
+          callback();
         }
-      }, 800);
+      }
+      typeChar();
     }
 
-    function simulateTyping() {
-      if (charIndex < credentials.length) {
-        typedSpan.textContent += credentials[charIndex++];
-        setTimeout(simulateTyping, 300);
-      } else {
-        setTimeout(() => {
+    function runBootSequence() {
+      bootScreen.style.display = "flex";
+      function nextLine() {
+        if (bootIndex < bootSequence.length) {
+          typeLine(bootSequence[bootIndex], bootIndex, () => {
+            bootIndex++;
+            nextLine();
+          });
+        } else {
           const authLine = document.createElement("div");
           authLine.className = "boot-line";
           authLine.textContent = "ACCESS AUTHORIZED [O5-CNCL]";
           bootScreen.appendChild(authLine);
           setTimeout(() => transitionToMainTerminal(), 1500);
-        }, 500);
+        }
       }
+      nextLine();
     }
 
     function transitionToMainTerminal() {
@@ -258,7 +248,7 @@
       }, 500);
     }
 
-    window.onload = simulateBootSequence;
+    window.onload = runBootSequence;
   </script>
 </body>
 </html>
