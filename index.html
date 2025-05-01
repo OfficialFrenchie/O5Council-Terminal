@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SCP O5 Council Terminal</title>
+    <title>SCP O5 Council Terminal - Login</title>
     <style>
-        /* Global Reset */
+        /* Reset */
         * {
             margin: 0;
             padding: 0;
@@ -18,55 +18,47 @@
             color: #0f0;
             height: 100vh;
             display: flex;
+            justify-content: center;
+            align-items: center;
             flex-direction: column;
-            justify-content: flex-start;
-            align-items: center;
-            overflow: hidden;
         }
 
-        header {
-            width: 100%;
-            background-color: #111;
-            padding: 10px 30px;
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            border-bottom: 2px solid #0f0;
+        /* Login Screen */
+        .login-container {
+            text-align: center;
+            padding: 20px;
+            background-color: #222;
+            border: 2px solid #0f0;
+            border-radius: 10px;
         }
 
-        header img {
-            height: 60px;
-            filter: grayscale(100%) brightness(0.8);
-        }
-
-        .glitch-text {
+        .login-header {
             font-size: 1.8em;
             font-weight: bold;
-            color: #0f0;
-            text-shadow: 2px 0 red, -2px 0 blue;
-            animation: glitch 1s infinite;
         }
 
-        @keyframes glitch {
-            0%, 100% {
-                text-shadow: 2px 0 red, -2px 0 blue;
-            }
+        .input-field {
+            background-color: black;
+            color: #0f0;
+            border: 1px solid #0f0;
+            font-size: 1.2em;
+            padding: 10px;
+            width: 250px;
+            margin-top: 20px;
+            border-radius: 5px;
+            outline: none;
+        }
 
-            50% {
-                text-shadow: -2px 0 red, 2px 0 blue;
-            }
+        .input-field:focus {
+            border-color: yellow;
         }
 
         .terminal-container {
+            display: none;
             width: 100%;
-            max-width: 1000px;
-            height: calc(100vh - 80px);
-            overflow: hidden;
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-start;
+            height: 100vh;
             padding: 20px;
+            overflow: hidden;
         }
 
         .terminal-output {
@@ -90,8 +82,6 @@
             background: transparent;
             font-size: 1.1em;
             padding: 5px;
-            white-space: nowrap;
-            margin-left: 5px;
         }
 
         .input-line:focus {
@@ -103,32 +93,9 @@
             white-space: pre-wrap;
         }
 
-        .error-line {
-            color: red;
-            font-weight: bold;
-        }
-
-        .hidden {
-            display: none;
-        }
-
         .help-text {
             font-size: 1.1em;
             margin-bottom: 20px;
-        }
-
-        .command-description {
-            color: #0f0;
-        }
-
-        .hidden-scroll {
-            overflow: hidden;
-        }
-
-        .terminal-header {
-            color: #0f0;
-            font-size: 1.5em;
-            font-weight: bold;
         }
 
         .redacted {
@@ -136,9 +103,8 @@
             font-style: italic;
         }
 
-        .file-content {
-            padding-left: 20px;
-            font-size: 1.1em;
+        .command-description {
+            color: #0f0;
         }
 
         /* Custom Scrollbar */
@@ -154,16 +120,17 @@
         ::-webkit-scrollbar-track {
             background: #111;
         }
-
     </style>
 </head>
 <body>
-    <header>
-        <img src="https://th.bing.com/th/id/OIP.JPWG2Dz6CCmpyTMAuK9EkAAAAA?rs=1&pid=ImgDetMain" alt="SCP Logo">
-        <div class="glitch-text">SCP Foundation - Site Excalibur : O5 Council Terminal</div>
-    </header>
+    <!-- Login Interface -->
+    <div class="login-container" id="login-container">
+        <div class="login-header">SCP Foundation Terminal Login</div>
+        <input type="password" id="password-field" class="input-field" placeholder="Enter password" autocomplete="off" autofocus />
+    </div>
 
-    <div class="terminal-container">
+    <!-- Terminal Interface -->
+    <div class="terminal-container" id="terminal-container">
         <div class="terminal-output" id="terminal-output"></div>
         <div class="command-line">
             <input type="text" id="input-line" class="input-line" autocomplete="off" autofocus />
@@ -172,10 +139,72 @@
 
     <script>
         // Elements
-        const terminalOutput = document.getElementById("terminal-output");
+        const loginContainer = document.getElementById("login-container");
+        const terminalContainer = document.getElementById("terminal-container");
+        const passwordField = document.getElementById("password-field");
         const inputLine = document.getElementById("input-line");
+        const terminalOutput = document.getElementById("terminal-output");
 
+        const correctPassword = "O5Council";  // Correct password for login (you can change it)
         const MAX_LINES = 15;  // Max visible lines
+
+        // Login and Terminal Switch
+        function startLogin() {
+            let typedPassword = "";
+            const password = correctPassword;
+
+            function typePassword() {
+                if (typedPassword.length < password.length) {
+                    typedPassword += password[typedPassword.length];
+                    passwordField.value = typedPassword;
+                    setTimeout(typePassword, 200);
+                } else {
+                    setTimeout(showTerminal, 500);
+                }
+            }
+
+            typePassword();
+        }
+
+        // Show Terminal after Successful Login
+        function showTerminal() {
+            loginContainer.style.display = "none";
+            terminalContainer.style.display = "block";
+            addLine("Welcome to the SCP Foundation Terminal - Site Excalibur", 500);
+            addLine("Type \"help\" for available commands.", 1000);
+            inputLine.focus();
+        }
+
+        // Command Functions
+        const commandFunctions = {
+            help: function() {
+                return [
+                    "Available Commands:",
+                    " - help                 → List all available commands",
+                    " - list                 → Display list of available files",
+                    " - open [filename]      → View a classified file (e.g., open scp-173)",
+                    " - logout               → Exit the terminal"
+                ];
+            },
+            list: function() {
+                return [
+                    "scp-173 - A statue that moves when unobserved.",
+                    "taskforce-epsilon-11 - Nine-Tailed Fox mobile task force.",
+                    "redacted-logs - Restricted access logs."
+                ];
+            },
+            open: function(args) {
+                const fileName = args[0].toLowerCase();
+                if (files[fileName]) {
+                    return files[fileName];
+                } else {
+                    return ["Error: File not found. Try \"list\" for available files."];
+                }
+            },
+            logout: function() {
+                return ["Logging out...", "Session terminated."];
+            }
+        };
 
         // Files in SCP Terminal
         const files = {
@@ -196,33 +225,6 @@
                 "Unauthorized access to these documents will be logged and reported.",
                 "[REDACTED ██████████████████████████████████████████████████████████████████]"
             ]
-        };
-
-        // Command Functions
-        const commandFunctions = {
-            help: function() {
-                return [
-                    "Available Commands:",
-                    " - help                 → List all available commands",
-                    " - list                 → Display list of available files",
-                    " - open [filename]      → View a classified file (e.g., open scp-173)",
-                    " - logout               → Exit the terminal"
-                ];
-            },
-            list: function() {
-                return Object.keys(files).map(file => ` - ${file}`);
-            },
-            open: function(args) {
-                const fileName = args[0].toLowerCase();
-                if (files[fileName]) {
-                    return files[fileName];
-                } else {
-                    return ["Error: File not found. Try \"list\" for available files."];
-                }
-            },
-            logout: function() {
-                return ["Logging out...", "Session terminated."];
-            }
         };
 
         // Helper Functions
@@ -266,10 +268,6 @@
 
         // Initialize Terminal
         function initializeTerminal() {
-            addLine("Welcome to the SCP Foundation Terminal - Site Excalibur");
-            addLine("Type \"help\" for available commands.");
-            inputLine.focus();
-
             inputLine.addEventListener("keydown", function(event) {
                 if (event.key === "Enter") {
                     handleInput();
@@ -279,6 +277,7 @@
 
         // Start Terminal Bootup
         window.onload = () => {
+            startLogin();
             initializeTerminal();
         };
     </script>
