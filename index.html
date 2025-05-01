@@ -1,1061 +1,2604 @@
-<!-- PART 1: HTML HEAD & INITIAL SETUP -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>SCP Foundation - Site Excalibur</title>
+  <title>O5 Council Terminal</title>
+  <link rel="stylesheet" href="styles.css" />
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
     body {
-      font-family: 'Courier New', Courier, monospace;
-      background: black;
-      color: #0f0;
+      margin: 0;
+      font-family: 'Courier New', monospace;
+      background-color: #0a0a0a;
+      color: #e0e0e0;
       display: flex;
       flex-direction: column;
       height: 100vh;
     }
-    header {
-      display: flex;
-      align-items: center;
-      background-color: #111;
-      padding: 10px 20px;
-      border-bottom: 2px solid #0f0;
-    }
-    header img {
-      height: 50px;
-      margin-right: 20px;
-    }
-    header h1 {
-      font-size: 1.5em;
-      animation: glitch 1s infinite;
-    }
-    @keyframes glitch {
-      0% { text-shadow: 2px 2px red; }
-      25% { text-shadow: -2px -2px lime; }
-      50% { text-shadow: 2px -2px blue; }
-      75% { text-shadow: -2px 2px yellow; }
-      100% { text-shadow: 2px 2px red; }
-    }
-    .login-container, .terminal-container {
+
+    #login-screen, #main-terminal {
       flex: 1;
-      display: flex;
+      display: none;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
-      flex-direction: column;
     }
-    .input-field {
-      background-color: black;
-      color: #0f0;
-      border: 1px solid #0f0;
-      font-size: 1.2em;
-      padding: 10px;
-      width: 300px;
-      margin-top: 20px;
-      border-radius: 5px;
-      outline: none;
+
+    #login-screen.active,
+    #main-terminal.active {
+      display: flex;
+    }
+
+    .center-box {
+      background-color: #111;
+      padding: 2rem;
+      border: 1px solid #555;
+      border-radius: 6px;
+      width: 90%;
+      max-width: 600px;
       text-align: center;
     }
-    .terminal {
+
+    input[type="password"] {
+      background-color: #000;
+      color: #0f0;
+      border: 1px solid #333;
+      padding: 0.5rem;
+      font-size: 1rem;
+      margin-top: 1rem;
       width: 100%;
-      height: 100%;
-      padding: 10px;
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
     }
-    .terminal-output {
-      flex: 1;
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
-      justify-content: flex-end;
+
+    .terminal {
+      background-color: #0f0f0f;
+      color: #c0c0c0;
+      padding: 1rem;
+      width: 100%;
+      max-width: 900px;
+      height: 80vh;
+      overflow-y: auto;
+      border: 1px solid #333;
+      border-radius: 5px;
+      font-size: 0.95rem;
     }
-    .output-line {
-      white-space: pre-wrap;
-      margin-bottom: 5px;
-    }
-    .command-line {
-      display: flex;
-    }
+
     .input-line {
-      flex: 1;
+      display: flex;
+      margin-top: 1rem;
+    }
+
+    .input-line span {
+      margin-right: 0.5rem;
+      color: #39ff14;
+    }
+
+    .input-line input {
       background: transparent;
       border: none;
-      color: #0f0;
-      font-size: 1em;
       outline: none;
+      color: #39ff14;
+      width: 100%;
+      font-size: 1rem;
+    }
+
+    .logo {
+      width: 100px;
+      margin-bottom: 1rem;
+    }
+
+    .faint {
+      opacity: 0.7;
     }
   </style>
 </head>
 <body>
-  <header>
-    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/SCP_Foundation_logo.svg/2560px-SCP_Foundation_logo.svg.png" alt="SCP Logo">
-    <h1>SCP Foundation - Site Excalibur : O5 Council Terminal</h1>
-  </header>
-
-  <div class="login-container" id="login-container">
-    <div id="auth-text">Authorizing connection to O5-Council Terminal...</div>
-    <input type="password" id="password-field" class="input-field" placeholder="Enter password" disabled>
-  </div>
-
-  <div class="terminal-container" id="terminal-container" style="display: none;">
-    <div class="terminal">
-      <div class="terminal-output" id="terminal-output"></div>
-      <div class="command-line">
-        <span style="color: #0f0;">&gt;</span>
-        <input type="text" id="input-line" class="input-line" autocomplete="off">
-      </div>
+  <div id="login-screen" class="active">
+    <div class="center-box">
+      <img class="logo" src="https://cdn.discordapp.com/attachments/907049520309895189/1367284032513114243/image.png" alt="SCP Logo">
+      <h2>O5 COUNCIL TERMINAL</h2>
+      <p>Enter Clearance Key</p>
+      <input type="password" id="password-input" placeholder="********" autofocus />
+      <p class="faint">Unauthorized access will be monitored, logged, and terminated.</p>
     </div>
   </div>
 
-<!-- END OF PART 1 -->
-<!-- PART 2: LOGIN SEQUENCE & INITIAL INTERACTION -->
-<script>
-  const authText = document.getElementById('auth-text');
-  const passwordField = document.getElementById('password-field');
-  const loginContainer = document.getElementById('login-container');
-  const terminalContainer = document.getElementById('terminal-container');
-  const terminalOutput = document.getElementById('terminal-output');
-  const inputLine = document.getElementById('input-line');
+  <div id="main-terminal">
+    <div class="terminal" id="terminal-output">
+      <p>Welcome to Site-01 Deep Terminal Access Node</p>
+      <p>Clearance Level: O5-ONLY</p>
+      <p>Type <code>help</code> for list of commands.</p>
+    </div>
+    <div class="input-line">
+      <span>&gt;</span><input type="text" id="command-input" autocomplete="off" />
+    </div>
+  </div>
 
-  const bootLines = [
-    "[ACCESS LEVEL: O5-Council Only]",
-    "Establishing encrypted connection to SCPNET...",
-    "Terminal handshake with Site-EX successful.",
-    "Routing clearance through O5 Command Core...",
-    "Verifying retinal and DNA signatures...",
-    "Authentication chain validated.",
-    "Authorizing session...",
-    "Access Granted to Site Excalibur Mainframe"
-  ];
+  <script src="script.js"></script>
+</body>
+</html>
+// script.js — PART 2: Login Handling and Terminal Initialization
 
-  let loginIndex = 0;
+document.addEventListener("DOMContentLoaded", () => {
+  const passwordInput = document.getElementById("password-input");
+  const loginScreen = document.getElementById("login-screen");
+  const terminalScreen = document.getElementById("main-terminal");
+  const terminalOutput = document.getElementById("terminal-output");
+  const commandInput = document.getElementById("command-input");
 
-  function typeBootLines() {
-    if (loginIndex < bootLines.length) {
-      authText.textContent = bootLines[loginIndex];
-      loginIndex++;
-      setTimeout(typeBootLines, 1300);
-    } else {
-      authText.textContent = "Enter Password: ********";
-      setTimeout(() => {
-        typePassword("********", 0);
-      }, 800);
+  const PASSWORD = "O5-ACCESS"; // <-- You can customize this later
+
+  // Handle Login Authentication
+  passwordInput.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") {
+      const entered = passwordInput.value.trim();
+      if (entered === PASSWORD) {
+        loginScreen.classList.remove("active");
+        terminalScreen.classList.add("active");
+        commandInput.focus();
+        displayInitialLog();
+      } else {
+        alert("ACCESS DENIED: Clearance Key Invalid.");
+        passwordInput.value = "";
+      }
     }
+  });
+
+  function displayInitialLog() {
+    printOutput(">> Session established...");
+    printOutput(">> Access Level: O5 Council / Overseer Protocol");
+    printOutput(">> Type 'help' for valid commands.");
   }
 
-  function typePassword(pass, index) {
-    if (index < pass.length) {
-      passwordField.value += pass[index];
-      setTimeout(() => typePassword(pass, index + 1), 180);
-    } else {
-      setTimeout(() => {
-        loginContainer.style.display = 'none';
-        terminalContainer.style.display = 'flex';
-        welcomeMessage();
-      }, 1000);
-    }
+  // Global Print Output Utility
+  function printOutput(text) {
+    const p = document.createElement("p");
+    p.textContent = text;
+    terminalOutput.appendChild(p);
+    terminalOutput.scrollTop = terminalOutput.scrollHeight;
   }
 
-  function welcomeMessage() {
-    printOutput("Welcome, O5-Council Member.");
-    printOutput("Access Level: ████████");
-    printOutput("Site: Excalibur (Deep Terminal Node: #019-Alpha)");
+  // Save these functions globally for use in later parts
+  window.printOutput = printOutput;
+  window.commandInput = commandInput;
+});
+// script.js — PART 3: Command Framework
+
+const commandHandlers = {
+  help: () => {
+    printOutput("Available Commands:");
+    printOutput("list - List accessible file subjects.");
+    printOutput("open-[subject] - Access a specific file.");
+    printOutput("terminate - Terminate session.");
+    printOutput("clear - Clear log and reset session message.");
+  },
+
+  list: () => {
+    printOutput("Listing File Categories:");
+    printOutput("- SCP Files");
+    printOutput("- Redacted Files");
+    printOutput("- Mobile Task Forces");
+    printOutput("- The Administrator");
+    printOutput("- The Professor");
+    printOutput("Use 'open-[subject]' to proceed.");
+  },
+
+  clear: () => {
+    const terminalOutput = document.getElementById("terminal-output");
+    terminalOutput.innerHTML = "";
+    printOutput(">> Session Logs Cleared.");
+    printOutput(">> Type 'help' for valid commands.");
+  },
+
+  terminate: () => {
+    printOutput(">> TERMINATING SESSION...");
+    setTimeout(() => {
+      printOutput("“We die in the dark so you can live in the light.”");
+      setTimeout(() => window.location.reload(), 3000);
+    }, 1500);
+  },
+};
+
+// Command Parser
+window.commandInput.addEventListener("keydown", (e) => {
+  if (e.key === "Enter") {
+    const input = e.target.value.trim().toLowerCase();
+    printOutput("> " + input);
+    e.target.value = "";
+
+    if (input.startsWith("open-")) {
+      const subject = input.replace("open-", "");
+      openFile(subject);
+    } else if (commandHandlers[input]) {
+      commandHandlers[input]();
+    } else {
+      printOutput("Unknown command. Type 'help' for a list of valid commands.");
+    }
+  }
+});
+
+// File Handler Stub (to be expanded later)
+function openFile(subject) {
+  printOutput(`Attempting to open '${subject}'...`);
+  setTimeout(() => {
+    printOutput(`[ACCESS ERROR] File '${subject}' is not available or classified in this part.`);
+  }, 1000);
+}
+// script.js — PART 4: SCP Files Definition
+
+const scpFiles = {
+  "scp-001": {
+    title: "SCP-001 - [THE GATE GUARDIAN]",
+    classification: "APOLLYON",
+    content: [
+      "Object Class: APOLLYON",
+      "Special Containment Procedures: SCP-001 is to be monitored at all times. Any being approaching SCP-001 is to be terminated immediately.",
+      "Description: A massive humanoid entity with wings and a flaming sword. SCP-001 stands before a gate-like structure. It speaks in Enochian and emits extreme radiation.",
+      "Note: SCP-001 has not moved from its position since discovery. Any interaction attempts have resulted in complete loss of personnel.",
+    ],
+  },
+  "scp-2317": {
+    title: "SCP-2317 - [THE DOOR TO ANOTHER WORLD]",
+    classification: "THAUMIEL / APOLLYON",
+    content: [
+      "Object Class: THAUMIEL (CLASSIFIED)",
+      "Description: A wooden door located in a salt flat in ███████. Leads to a vast extra-dimensional prison containing SCP-2317-K – believed to be an aspect of the Scarlet King.",
+      "Current Status: Rituals to contain SCP-2317-K have failed. Breach expected within the next decade.",
+    ],
+  },
+  "scp-093": {
+    title: "SCP-093 - [THE RED SEA OBJECT]",
+    classification: "EUCLIDEAN-CLASSIFIED",
+    content: [
+      "Object Class: SPECIAL",
+      "Description: A red disk capable of opening portals to an alternate timeline.",
+      "Findings: Personnel sent through the portals report devastated, religiously dominated civilizations. Extreme theological deviations from baseline reality.",
+    ],
+  },
+};
+
+// Update file opening logic to include SCP files
+function openFile(subject) {
+  if (scpFiles[subject]) {
+    const file = scpFiles[subject];
+    printOutput(`>> Accessing ${file.title}`);
+    file.content.forEach((line, index) => {
+      setTimeout(() => printOutput(line), 400 * index);
+    });
+  } else {
+    printOutput(`[ACCESS ERROR] File '${subject}' not found in SCP directory.`);
+  }
+}
+// script.js — PART 5: Redacted Files Definition
+
+const redactedFiles = {
+  "redacted-omega": {
+    title: "File OMEGA - [████████ Protocol]",
+    classification: "O5-EYES ONLY",
+    content: [
+      "Access Level: O5-12",
+      "Designation: Protocol ███████",
+      "Status: Dormant (Contingency)",
+      "Overview: Operation OMEGA is a terminal failsafe involving total disintegration of planetary assets via embedded Zero-Point Collapse engines.",
+      "Trigger Condition: Universal ontological collapse or Scarlet King manifestation. Use requires unanimous O5 approval and direct Administrator confirmation.",
+      "Note: No simulation has survived past Phase III.",
+    ],
+  },
+  "redacted-alabaster": {
+    title: "File ALABASTER - [THE PROFESSOR DOSSIER]",
+    classification: "UNKNOWN CLASS",
+    content: [
+      "Access Level: O5-1 | Overseer Lock Required",
+      "Codename: THE PROFESSOR",
+      "Status: ACTIVE & UNCONTAINED",
+      "Details: Subject known only as 'The Professor' has authored anomalous ontological structures mimicking baseline SCP containment formatting.",
+      "Implication: At least 12 SCP files currently in Foundation databases are believed to be fabricated constructs designed by the subject.",
+      "Note: Council members are advised to avoid engaging with the entity directly.",
+    ],
+  },
+  "redacted-ganymede": {
+    title: "File GANYMEDE - [Project Null-Heir]",
+    classification: "BLACKSITE-CLASSIFIED",
+    content: [
+      "Access Level: O5-5",
+      "Directive: Null-Heir Generation Protocol",
+      "Site: GANYMEDE BLACK NEXUS NODE",
+      "Intent: Artificial succession system for the Administrator role. Project terminated due to behavioral corruption of the Heir construct.",
+      "Note: Heir still believed to exist within Deep Web Layer-3 SCiPNET. Silent ping responses confirmed 3 days ago.",
+    ],
+  },
+};
+
+// Update openFile function to include redacted files
+function openFile(subject) {
+  if (scpFiles[subject]) {
+    const file = scpFiles[subject];
+    printOutput(`>> Accessing ${file.title}`);
+    file.content.forEach((line, index) => {
+      setTimeout(() => printOutput(line), 400 * index);
+    });
+  } else if (redactedFiles[subject]) {
+    const file = redactedFiles[subject];
+    printOutput(`>> Accessing ${file.title}`);
+    file.content.forEach((line, index) => {
+      setTimeout(() => printOutput(line), 400 * index);
+    });
+  } else {
+    printOutput(`[ACCESS ERROR] File '${subject}' not found in known directories.`);
+  }
+}
+// script.js — PART 6: "The Professor" Directory & Commands
+
+const professorFiles = {
+  "professor-null": {
+    title: "The Professor: Manifest NULL",
+    classification: "CLASS-VII / ANTI-MEMETIC",
+    content: [
+      "Access Level: O5-Only",
+      "File Integrity: Unstable",
+      "Note: This document self-replicates when perceived.",
+      "Summary: Manifest NULL is the first known interaction with 'The Professor'.",
+      "Incident Log: Agent ███████ reported auditory hallucinations in SCP documentation that were not previously written.",
+      "Outcome: Agent expired from cognitive fracturing. No known vector identified.",
+    ],
+  },
+  "professor-blindgod": {
+    title: "The Professor: The Blind God Hypothesis",
+    classification: "DEEP-VOID PROPOSAL",
+    content: [
+      "Access Level: O5-Only",
+      "Summary: 'The Professor' posits a multiversal observer entity which dictates the Foundation narrative.",
+      "Theoretical Model: SCP entries are created when enough readers 'observe' them.",
+      "Implication: Belief creates containment. Disbelief terminates threat.",
+      "Note: Cross-reference with Meta-Containment Division Proposal 09-A.",
+    ],
+  },
+  "professor-author": {
+    title: "The Professor: The Author of Worlds",
+    classification: "CLASSIFIED / COGNITOHAZARD WARNING",
+    content: [
+      "Access Level: O5-Only",
+      "Flag: Cognitohazard Risk",
+      "Excerpt: \"He watches the watchers, binding truth to fiction. The more you read, the more he writes.\"",
+      "Warning: Subject is not contained. Do not search for physical references.",
+      "Control Team Designation: OFF-LIMITS",
+    ],
+  },
+};
+
+// Add new list-professor command
+commands["list-professor"] = function () {
+  printOutput("Listing files under: The Professor Directory");
+  Object.keys(professorFiles).forEach((key) => {
+    printOutput(`${key} - ${professorFiles[key].title} [${professorFiles[key].classification}]`);
+  });
+};
+
+// Add handler for open-professor-[id]
+function openFile(subject) {
+  if (scpFiles[subject]) {
+    const file = scpFiles[subject];
+    printOutput(`>> Accessing ${file.title}`);
+    file.content.forEach((line, i) => setTimeout(() => printOutput(line), 400 * i));
+  } else if (redactedFiles[subject]) {
+    const file = redactedFiles[subject];
+    printOutput(`>> Accessing ${file.title}`);
+    file.content.forEach((line, i) => setTimeout(() => printOutput(line), 400 * i));
+  } else if (professorFiles[subject]) {
+    const file = professorFiles[subject];
+    printOutput(`>> Accessing ${file.title}`);
+    file.content.forEach((line, i) => setTimeout(() => printOutput(line), 400 * i));
+  } else {
+    printOutput(`[ACCESS ERROR] File '${subject}' not found in any secure directory.`);
+  }
+}
+// script.js — PART 7: Terminate, Clear, and Utility Commands
+
+// TERMINATE COMMAND: Ends the session with SCP motto
+commands["terminate"] = function () {
+  printOutput("Session Terminating...");
+  setTimeout(() => {
+    printOutput("");
+    printOutput("“We die in the dark so you can live in the light.”");
+    printOutput("~ SCP Foundation | O5 Council Protocol Shutdown");
+    document.querySelector(".terminal-input").disabled = true;
+  }, 1000);
+};
+
+// CLEAR COMMAND: Clears output and resets message
+commands["clear"] = function () {
+  terminalOutput.innerHTML = "";
+  printOutput("Session logs cleared.");
+  printOutput("Welcome back, Overseer.");
+  commands["help"]();
+};
+
+// CORE PRINT FUNCTION (If not yet defined)
+function printOutput(text) {
+  const outputLine = document.createElement("div");
+  outputLine.classList.add("terminal-line");
+  outputLine.innerHTML = text;
+  terminalOutput.appendChild(outputLine);
+  terminalOutput.scrollTop = terminalOutput.scrollHeight;
+}
+
+// COMMAND HANDLER LOGIC
+function handleCommand(input) {
+  const command = input.trim().toLowerCase();
+  if (command.startsWith("open-")) {
+    const subject = command.replace("open-", "");
+    openFile(subject);
+  } else if (commands[command]) {
+    commands[command]();
+  } else {
+    printOutput(`Unknown command: '${command}'`);
     printOutput("Type 'help' to view available commands.");
+  }
+}
+
+// EVENT LISTENER (Attach this only once!)
+if (!window._inputHandlerAttached) {
+  terminalInput.addEventListener("keydown", function (e) {
+    if (e.key === "Enter") {
+      const input = terminalInput.value;
+      printOutput(`> ${input}`);
+      handleCommand(input);
+      terminalInput.value = "";
+    }
+  });
+  window._inputHandlerAttached = true;
+}
+/* style.css — PART 8: Monochrome Theme & Dynamic Output Styling */
+
+/* Output line container */
+.terminal-line {
+  font-family: "Courier New", monospace;
+  font-size: 14px;
+  color: #e6e6e6;
+  padding: 4px 0;
+  border-left: 2px solid #ccc;
+  padding-left: 10px;
+  margin-left: 4px;
+  transition: all 0.2s ease;
+}
+
+.terminal-line.important {
+  color: #ffffff;
+  background-color: rgba(255, 255, 255, 0.05);
+  border-left: 3px solid #ffffff;
+  font-weight: bold;
+}
+
+.terminal-line.warning {
+  color: #ff4c4c;
+  border-left: 3px solid #ff4c4c;
+  font-weight: bold;
+}
+
+.terminal-line.section-header {
+  margin-top: 20px;
+  padding-top: 10px;
+  font-size: 16px;
+  font-weight: bold;
+  text-transform: uppercase;
+  color: #00ffff;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.terminal-line.label-clearance {
+  color: #ffa500;
+  font-weight: bold;
+  text-transform: uppercase;
+  margin-top: 10px;
+}
+
+.terminal-line.label-redacted {
+  color: #b30000;
+  font-style: italic;
+  opacity: 0.8;
+}
+
+.terminal-line.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 5px;
+  margin-top: 20px;
+}
+
+.terminal-line.logo img {
+  height: 32px;
+  width: auto;
+  filter: brightness(0.85);
+}
+
+.terminal-line.motto {
+  font-style: italic;
+  text-align: center;
+  margin-top: 30px;
+  font-size: 14px;
+  color: #888;
+}
+
+/* Optional icon class support */
+.icon {
+  width: 18px;
+  height: 18px;
+  vertical-align: middle;
+  margin-right: 6px;
+  opacity: 0.8;
+}
+
+/* Fade-in animation */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.terminal-line {
+  animation: fadeIn 0.2s ease-in-out;
+}
+// script.js — PART 9: Advanced Output Rendering
+
+/**
+ * Enhanced output rendering system.
+ * @param {string} text - Text content to render.
+ * @param {Object} options - Optional styling settings.
+ * @param {string} options.type - One of: 'normal', 'important', 'warning', 'section', 'clearance', 'redacted', 'motto', 'logo'.
+ * @param {string} options.image - Image URL for logos if type is 'logo'.
+ */
+function printOutput(text, options = {}) {
+  const line = document.createElement('div');
+  line.classList.add('terminal-line');
+
+  const { type = 'normal', image = '' } = options;
+
+  switch (type) {
+    case 'important':
+      line.classList.add('important');
+      break;
+    case 'warning':
+      line.classList.add('warning');
+      break;
+    case 'section':
+      line.classList.add('section-header');
+      break;
+    case 'clearance':
+      line.classList.add('label-clearance');
+      break;
+    case 'redacted':
+      line.classList.add('label-redacted');
+      break;
+    case 'motto':
+      line.classList.add('motto');
+      break;
+    case 'logo':
+      line.classList.add('logo');
+      const img = document.createElement('img');
+      img.src = image;
+      img.alt = "SCP Logo";
+      line.appendChild(img);
+      const textNode = document.createElement('span');
+      textNode.textContent = text;
+      line.appendChild(textNode);
+      break;
+    default:
+      // 'normal' style
+      break;
+  }
+
+  if (type !== 'logo') {
+    line.textContent = text;
+  }
+
+  terminalOutput.appendChild(line);
+  terminalOutput.scrollTop = terminalOutput.scrollHeight;
+}
+// script.js — PART 10: Core Command Definitions
+
+const commands = {
+  // Help Command
+  'help': function() {
+    printOutput("Available Commands:", { type: 'important' });
+    printOutput("list - List available files and directories.", { type: 'normal' });
+    printOutput("open - Open a specific file or entry.", { type: 'normal' });
+    printOutput("terminate - End the current session and shutdown the terminal.", { type: 'normal' });
+    printOutput("clear - Clear the terminal screen and reset session.", { type: 'normal' });
+  },
+
+  // List Command - Shows available directories/files
+  'list': function() {
+    printOutput("Listing available files and directories...", { type: 'section' });
+    printOutput("SCP Directory - /scp", { type: 'normal' });
+    printOutput("MTF Directory - /mtf", { type: 'normal' });
+    printOutput("Redacted Files - /redacted", { type: 'normal' });
+    printOutput("Enter 'open' followed by the file number to access.", { type: 'normal' });
+  },
+
+  // Open Command - Opens a specific SCP/MTF/Redacted file
+  'open': function() {
+    printOutput("Accessing file...", { type: 'motto' });
+    simulateFileAccess("SCP-001 - The Gate Guardian", function() {
+      printOutput("SCP-001 - The Gate Guardian - [CLASSIFIED]", { type: 'important' });
+      printOutput("File contains highly sensitive information. Clearance level required: O5-█", { type: 'clearance' });
+    });
+    simulateFileAccess("SCP-████ - The Scarlet King", function() {
+      printOutput("SCP-████ - The Scarlet King - [REDACATED]", { type: 'redacted' });
+    });
+    simulateFileAccess("SCP-███ - O5 Command Protocol", function() {
+      printOutput("SCP-███ - O5 Command Protocol - [CONFIDENTIAL]", { type: 'important' });
+    });
+  },
+
+  // Terminate Command - Ends the session with a message
+  'terminate': function() {
+    printOutput("Terminating session...", { type: 'warning' });
+    setTimeout(() => {
+      printOutput("Session ended. We die in the dark so you can live in the light.", { type: 'motto' });
+      setTimeout(() => {
+        window.location.reload(); // Refresh the page or terminate.
+      }, 1500);
+    }, 1000);
+  },
+
+  // Clear Command - Clears the terminal output and resets session.
+  'clear': function() {
+    terminalOutput.innerHTML = ''; // Clear terminal content
+    printOutput("Session logs cleared.", { type: 'motto' });
+    printOutput("Welcome to the O5 Council Terminal. Type 'help' for commands.", { type: 'important' });
+  }
+};
+
+// Simulate file access to show loading and status
+function simulateFileAccess(fileName, callback) {
+  printOutput(`Accessing ${fileName}...`, { type: 'normal' });
+  setTimeout(() => {
+    printOutput(`${fileName} - [FILE LOADED]`, { type: 'normal' });
+    callback();
+  }, 2000); // Simulate 2 second delay for file access
+}
+
+// Handle Command Input
+inputLine.addEventListener('keydown', function(event) {
+  if (event.key === 'Enter') {
+    const command = inputLine.value.trim();
+    printOutput(`> ${command}`, { type: 'normal' });
+    if (commands[command]) {
+      commands[command]();
+    } else {
+      printOutput(`Unknown command: ${command}`, { type: 'warning' });
+      printOutput("Type 'help' for a list of available commands.", { type: 'normal' });
+    }
+    inputLine.value = ''; // Clear the input
     inputLine.focus();
   }
+});
+// script.js — PART 11: Advanced File Loading and Directory Simulation
 
-  function printOutput(text) {
-    const line = document.createElement('div');
-    line.className = 'output-line';
-    line.textContent = text;
-    terminalOutput.appendChild(line);
-    terminalOutput.scrollTop = terminalOutput.scrollHeight;
-  }
+// Enhanced File Simulation for SCP, MTF, and Redacted files
+const fileDirectories = {
+  '/scp': [
+    { id: '001', title: 'The Gate Guardian', status: 'CLASSIFIED' },
+    { id: '002', title: 'The Scarlet King', status: 'REDACTED' },
+    { id: '003', title: 'The Clockwork Entity', status: 'CONFIDENTIAL' },
+    { id: '004', title: 'The Spiral Path', status: 'TOP SECRET' },
+  ],
+  '/mtf': [
+    { id: '001', title: 'MTF Unit Alpha-9', status: 'ACTIVE' },
+    { id: '002', title: 'MTF Unit Gamma-12', status: 'DECOMMISSIONED' },
+    { id: '003', title: 'MTF Unit Zeta-3', status: 'CLASSIFIED' },
+  ],
+  '/redacted': [
+    { id: '001', title: 'Project: Charon', status: 'REDACTED' },
+    { id: '002', title: 'Black Site Operations', status: 'TOP SECRET' },
+    { id: '003', title: 'The O5-Council Directive', status: 'RESTRICTED' },
+  ]
+};
 
-  window.onload = () => {
-    typeBootLines();
-  };
-</script>
-
-<!-- END OF PART 2 -->
-<!-- PART 3: COMMAND HANDLING & FILE ACCESS -->
-<script>
-  // Command handling logic
-  const commands = {
-    'help': function() {
-      printOutput("Available commands:");
-      printOutput("help - Display this message.");
-      printOutput("list - List available files.");
-      printOutput("scp - Access SCP-related classified documents.");
-      printOutput("taskforce - View Task Force operations.");
-      printOutput("redacted - Access Redacted/Secret files.");
-      printOutput("exit - Exit the terminal.");
-    },
-    'list': function() {
-      printOutput("Listing available files...");
-      printOutput("SCP Directory - /scp");
-      printOutput("Task Force Directory - /taskforce");
-      printOutput("Redacted Files Directory - /redacted");
-      printOutput("Type 'scp', 'taskforce', or 'redacted' followed by file number for access.");
-    },
-    'scp': function() {
-      printOutput("Accessing SCP classified files...");
-      printOutput("SCP-███ - [REDACTED]");
-      printOutput("SCP-███ - [CLASSIFIED]");
-      printOutput("SCP-███ - [SECRET]");
-      printOutput("SCP-001 - [TOP SECRET]");
-    },
-    'taskforce': function() {
-      printOutput("Accessing Task Force operation logs...");
-      printOutput("TF-███ - Operation ████ - [SECRET]");
-      printOutput("TF-███ - Operation ████ - [RESTRICTED]");
-      printOutput("TF-███ - Operation ████ - [CLASSIFIED]");
-    },
-    'redacted': function() {
-      printOutput("Accessing Redacted/Secret Files...");
-      printOutput("File 001 - [REDACTED]");
-      printOutput("File 002 - [CONFIDENTIAL]");
-      printOutput("File 003 - [TOP SECRET]");
-      printOutput("File 004 - [CLASSIFIED]");
-    },
-    'exit': function() {
-      printOutput("Exiting terminal...");
-      setTimeout(() => {
-        window.location.reload();
-      }, 1000);
-    }
-  };
-
-  // Function to handle commands entered by the user
-  function handleCommand(command) {
-    if (commands[command]) {
-      commands[command]();
-    } else {
-      printOutput("Unknown command: " + command);
-      printOutput("Type 'help' for a list of available commands.");
-    }
-  }
-
-  // Event listener for command input
-  inputLine.addEventListener('keydown', function(event) {
-    if (event.key === 'Enter') {
-      const command = inputLine.value.trim();
-      printOutput("&gt; " + command);
-      handleCommand(command);
-      inputLine.value = '';
-      inputLine.focus();
-    }
-  });
-</script>
-
-<!-- END OF PART 3 -->
-<!-- PART 4: FILE ACCESS SIMULATION & ENHANCEMENTS -->
-<script>
-  // Simulate file access with a loading process
-  function simulateFileAccess(fileName, callback) {
-    printOutput("Accessing " + fileName + "...");
-    setTimeout(() => {
-      printOutput(fileName + " - [FILE LOADED]");
-      callback();
-    }, 2000);  // Simulate a 2-second loading time for each file
-  }
-
-  // Modified commands to simulate loading for each file type
-  const commands = {
-    'help': function() {
-      printOutput("Available commands:");
-      printOutput("help - Display this message.");
-      printOutput("list - List available files.");
-      printOutput("scp - Access SCP-related classified documents.");
-      printOutput("taskforce - View Task Force operations.");
-      printOutput("redacted - Access Redacted/Secret files.");
-      printOutput("exit - Exit the terminal.");
-    },
-    'list': function() {
-      printOutput("Listing available files...");
-      printOutput("SCP Directory - /scp");
-      printOutput("Task Force Directory - /taskforce");
-      printOutput("Redacted Files Directory - /redacted");
-      printOutput("Type 'scp', 'taskforce', or 'redacted' followed by file number for access.");
-    },
-    'scp': function() {
-      simulateFileAccess("SCP-███", () => {
-        printOutput("SCP-███ - [REDACTED]");
-      });
-      simulateFileAccess("SCP-████", () => {
-        printOutput("SCP-████ - [CLASSIFIED]");
-      });
-      simulateFileAccess("SCP-█████", () => {
-        printOutput("SCP-█████ - [SECRET]");
-      });
-      simulateFileAccess("SCP-001", () => {
-        printOutput("SCP-001 - [TOP SECRET]");
-      });
-    },
-    'taskforce': function() {
-      simulateFileAccess("TF-███ - Operation ████", () => {
-        printOutput("TF-███ - Operation ████ - [SECRET]");
-      });
-      simulateFileAccess("TF-████ - Operation ████", () => {
-        printOutput("TF-████ - Operation ████ - [RESTRICTED]");
-      });
-      simulateFileAccess("TF-█████ - Operation █████", () => {
-        printOutput("TF-█████ - Operation █████ - [CLASSIFIED]");
-      });
-    },
-    'redacted': function() {
-      simulateFileAccess("File 001 - [REDACTED]", () => {
-        printOutput("File 001 - [REDACTED]");
-      });
-      simulateFileAccess("File 002 - [CONFIDENTIAL]", () => {
-        printOutput("File 002 - [CONFIDENTIAL]");
-      });
-      simulateFileAccess("File 003 - [TOP SECRET]", () => {
-        printOutput("File 003 - [TOP SECRET]");
-      });
-      simulateFileAccess("File 004 - [CLASSIFIED]", () => {
-        printOutput("File 004 - [CLASSIFIED]");
-      });
-    },
-    'exit': function() {
-      printOutput("Exiting terminal...");
-      setTimeout(() => {
-        window.location.reload();
-      }, 1000);
-    }
-  };
-
-  // Modified function to handle commands with file loading simulation
-  function handleCommand(command) {
-    if (commands[command]) {
-      commands[command]();
-    } else {
-      printOutput("Unknown command: " + command);
-      printOutput("Type 'help' for a list of available commands.");
-    }
-  }
-
-  // Event listener for user input in the terminal
-  inputLine.addEventListener('keydown', function(event) {
-    if (event.key === 'Enter') {
-      const command = inputLine.value.trim();
-      printOutput("&gt; " + command);
-      handleCommand(command);
-      inputLine.value = '';
-      inputLine.focus();
-    }
-  });
-</script>
-
-<!-- END OF PART 4 -->
-<!-- PART 5: LOADING ANIMATION & ADVANCED COMMANDS -->
-<script>
-  // Loading spinner function to simulate data retrieval
-  function showLoadingAnimation() {
-    const loadingText = document.createElement('div');
-    loadingText.classList.add('loading-text');
-    loadingText.textContent = "Loading... Please wait.";
-    terminalOutput.appendChild(loadingText);
-
-    // Create spinner
-    const spinner = document.createElement('div');
-    spinner.classList.add('spinner');
-    terminalOutput.appendChild(spinner);
-  }
-
-  // Hide loading animation after file is "loaded"
-  function hideLoadingAnimation() {
-    const loadingText = document.querySelector('.loading-text');
-    const spinner = document.querySelector('.spinner');
-    if (loadingText) loadingText.remove();
-    if (spinner) spinner.remove();
-  }
-
-  // Enhanced file access simulation with loading spinner
-  function simulateFileAccessWithSpinner(fileName, callback) {
-    showLoadingAnimation();
-    setTimeout(() => {
-      hideLoadingAnimation();
-      printOutput(fileName + " - [FILE LOADED]");
-      callback();
-    }, 3000); // Adjust to simulate file access time
-  }
-
-  // Extend the 'scp', 'taskforce', and 'redacted' commands with the spinner effect
-  const commands = {
-    'scp': function() {
-      simulateFileAccessWithSpinner("SCP-███", () => {
-        printOutput("SCP-███ - [REDACTED]");
-      });
-      simulateFileAccessWithSpinner("SCP-████", () => {
-        printOutput("SCP-████ - [CLASSIFIED]");
-      });
-      simulateFileAccessWithSpinner("SCP-█████", () => {
-        printOutput("SCP-█████ - [SECRET]");
-      });
-      simulateFileAccessWithSpinner("SCP-001 - The Scarlet King", () => {
-        printOutput("SCP-001 - The Scarlet King - [TOP SECRET]");
-      });
-    },
-    'taskforce': function() {
-      simulateFileAccessWithSpinner("TF-███ - Operation ████", () => {
-        printOutput("TF-███ - Operation ████ - [SECRET]");
-      });
-      simulateFileAccessWithSpinner("TF-████ - Operation ████", () => {
-        printOutput("TF-████ - Operation ████ - [RESTRICTED]");
-      });
-      simulateFileAccessWithSpinner("TF-█████ - Operation █████", () => {
-        printOutput("TF-█████ - Operation █████ - [CLASSIFIED]");
-      });
-    },
-    'redacted': function() {
-      simulateFileAccessWithSpinner("File 001 - [REDACTED]", () => {
-        printOutput("File 001 - [REDACTED]");
-      });
-      simulateFileAccessWithSpinner("File 002 - [CONFIDENTIAL]", () => {
-        printOutput("File 002 - [CONFIDENTIAL]");
-      });
-      simulateFileAccessWithSpinner("File 003 - [TOP SECRET]", () => {
-        printOutput("File 003 - [TOP SECRET]");
-      });
-      simulateFileAccessWithSpinner("File 004 - [CLASSIFIED]", () => {
-        printOutput("File 004 - [CLASSIFIED]");
-      });
-    },
-    'exit': function() {
-      printOutput("Exiting terminal...");
-      setTimeout(() => {
-        window.location.reload();
-      }, 1000);
-    }
-  };
-
-  // Enhance file loading experience with a dynamic spinner and text
-  function printOutput(text) {
-    const line = document.createElement('div');
-    line.className = 'output-line';
-    line.textContent = text;
-    terminalOutput.appendChild(line);
-    terminalOutput.scrollTop = terminalOutput.scrollHeight;
-  }
-
-  // Event listener to handle user input and execute commands
-  inputLine.addEventListener('keydown', function(event) {
-    if (event.key === 'Enter') {
-      const command = inputLine.value.trim();
-      printOutput("&gt; " + command);
-      handleCommand(command);
-      inputLine.value = '';
-      inputLine.focus();
-    }
-  });
-</script>
-
-<style>
-  /* Add custom spinner animation */
-  .spinner {
-    border: 4px solid transparent;
-    border-top: 4px solid #0f0;
-    border-radius: 50%;
-    width: 30px;
-    height: 30px;
-    animation: spin 1s linear infinite;
-  }
-
-  @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-  }
-
-  .loading-text {
-    color: #0f0;
-    font-size: 1.2em;
-    margin-top: 20px;
-  }
-</style>
-
-<!-- END OF PART 5 -->
-<!-- PART 6: HELP SYSTEM & DYNAMIC COMMAND SUGGESTIONS -->
-<script>
-  // Create a dynamic suggestion list for user input
-  function showSuggestions(query) {
-    const suggestions = getSuggestions(query);
-    const suggestionContainer = document.createElement('div');
-    suggestionContainer.classList.add('suggestions');
-
-    suggestions.forEach((suggestion) => {
-      const suggestionItem = document.createElement('div');
-      suggestionItem.classList.add('suggestion-item');
-      suggestionItem.textContent = suggestion;
-      suggestionItem.addEventListener('click', () => {
-        inputLine.value = suggestion;
-        handleCommand(suggestion);
-      });
-      suggestionContainer.appendChild(suggestionItem);
+// Function to simulate access to a directory, listing available files
+function listFiles(directory) {
+  const files = fileDirectories[directory];
+  if (files) {
+    printOutput(`Listing files in directory: ${directory}`, { type: 'section' });
+    files.forEach(file => {
+      printOutput(`${file.id} - ${file.title} - [${file.status}]`, { type: 'normal' });
     });
-
-    terminalOutput.appendChild(suggestionContainer);
-    terminalOutput.scrollTop = terminalOutput.scrollHeight;
+  } else {
+    printOutput(`Directory ${directory} not found. Use 'help' for command list.`, { type: 'warning' });
   }
+}
 
-  // Get suggestions based on user input
-  function getSuggestions(query) {
-    const allCommands = ['help', 'list', 'scp', 'taskforce', 'redacted', 'exit'];
-    return allCommands.filter(command => command.startsWith(query));
-  }
-
-  // Display the help message
-  function showHelp() {
-    printOutput("Welcome to the O5 Council Terminal.");
-    printOutput("Available commands include:");
-    printOutput("help - Show this help message.");
-    printOutput("list - List available classified files.");
-    printOutput("scp - Access SCP-related documents.");
-    printOutput("taskforce - View Task Force operations.");
-    printOutput("redacted - Access redacted or classified files.");
-    printOutput("exit - Exit the terminal.");
-    printOutput("Type 'list' to view file directories or 'scp' to access files.");
-  }
-
-  // Override the 'help' command to show an enhanced help system
-  const commands = {
-    'help': function() {
-      showHelp();
-    },
-    'list': function() {
-      printOutput("Listing classified directories...");
-      printOutput("/scp - SCP-related files");
-      printOutput("/taskforce - Task Force operation files");
-      printOutput("/redacted - Redacted files");
-      printOutput("Type 'scp' to access SCP files or 'taskforce' for task force operations.");
-    },
-    'scp': function() {
-      simulateFileAccessWithSpinner("SCP-███", () => {
-        printOutput("SCP-███ - [REDACTED]");
-      });
-      simulateFileAccessWithSpinner("SCP-████", () => {
-        printOutput("SCP-████ - [CLASSIFIED]");
-      });
-      simulateFileAccessWithSpinner("SCP-001 - The Scarlet King", () => {
-        printOutput("SCP-001 - The Scarlet King - [TOP SECRET]");
-      });
-    },
-    'taskforce': function() {
-      simulateFileAccessWithSpinner("TF-███ - Operation ████", () => {
-        printOutput("TF-███ - Operation ████ - [SECRET]");
-      });
-      simulateFileAccessWithSpinner("TF-████ - Operation ████", () => {
-        printOutput("TF-████ - Operation ████ - [RESTRICTED]");
-      });
-      simulateFileAccessWithSpinner("TF-█████ - Operation █████", () => {
-        printOutput("TF-█████ - Operation █████ - [CLASSIFIED]");
-      });
-    },
-    'redacted': function() {
-      simulateFileAccessWithSpinner("File 001 - [REDACTED]", () => {
-        printOutput("File 001 - [REDACTED]");
-      });
-      simulateFileAccessWithSpinner("File 002 - [CONFIDENTIAL]", () => {
-        printOutput("File 002 - [CONFIDENTIAL]");
-      });
-      simulateFileAccessWithSpinner("File 003 - [TOP SECRET]", () => {
-        printOutput("File 003 - [TOP SECRET]");
-      });
-    },
-    'exit': function() {
-      printOutput("Exiting terminal...");
-      setTimeout(() => {
-        window.location.reload();
-      }, 1000);
-    }
-  };
-
-  // Update the terminal to handle dynamic suggestions while typing
-  inputLine.addEventListener('input', function(event) {
-    const query = inputLine.value.trim();
-    if (query.length > 0) {
-      showSuggestions(query);
-    }
-  });
-
-  // Ensure suggestions are cleared when the user submits the command
-  inputLine.addEventListener('keydown', function(event) {
-    if (event.key === 'Enter') {
-      const command = inputLine.value.trim();
-      printOutput("&gt; " + command);
-      handleCommand(command);
-      inputLine.value = '';
-      inputLine.focus();
-      const suggestions = document.querySelector('.suggestions');
-      if (suggestions) {
-        suggestions.remove();
-      }
-    }
-  });
-</script>
-
-<style>
-  /* Style for dynamic command suggestions */
-  .suggestions {
-    position: absolute;
-    background: #111;
-    border: 1px solid #0f0;
-    width: 300px;
-    max-height: 150px;
-    overflow-y: auto;
-    top: 70px;
-    left: 20px;
-    z-index: 10;
-  }
-
-  .suggestion-item {
-    padding: 5px;
-    color: #0f0;
-    cursor: pointer;
-  }
-
-  .suggestion-item:hover {
-    background-color: #222;
-  }
-</style>
-
-<!-- END OF PART 6 -->
-<!-- PART 7: FILE ACCESS SIMULATION & CUSTOMIZED FILE INTERACTIONS -->
-<script>
-  // Simulate file access with delay and handle custom messages for each file
-  function simulateFileAccessWithSpinner(fileName, callback) {
-    printOutput("Accessing " + fileName + "...");
-    showSpinner(true);
+// Function to simulate accessing specific files in SCP, MTF, or Redacted categories
+function openFile(directory, fileId) {
+  const files = fileDirectories[directory];
+  const file = files ? files.find(f => f.id === fileId) : null;
+  if (file) {
+    printOutput(`Opening file: ${file.title}...`, { type: 'normal' });
     setTimeout(() => {
-      printOutput(fileName + " - [FILE LOADED]");
-      showSpinner(false);
-      callback();
-    }, 3000); // Simulated delay for file access
-  }
-
-  // Function to show or hide a loading spinner
-  function showSpinner(show) {
-    const spinner = document.getElementById('loading-spinner');
-    if (show) {
-      spinner.style.display = 'block';
-    } else {
-      spinner.style.display = 'none';
-    }
-  }
-
-  // Add customized access for specific classified files
-  function accessClassifiedFile(fileName) {
-    if (fileName === "SCP-001 - The Scarlet King") {
-      printOutput("Warning: Unauthorized access to SCP-001 detected.");
-      printOutput("File access restricted to Level-███ clearance.");
-      printOutput("Access denied.");
-    } else if (fileName === "SCP-███") {
-      printOutput("File access granted: [REDACTED]...");
-      printOutput("Do not distribute.");
-    } else if (fileName === "TF-█████ - Operation █████") {
-      printOutput("Operation █████ is classified under 'O5'.");
-      printOutput("Highly sensitive information. Proceed with caution.");
-    } else {
-      printOutput(fileName + " is available for viewing.");
-    }
-  }
-
-  // Add a 'top secret' file category for special access
-  const commands = {
-    'help': function() {
-      printOutput("Available commands:");
-      printOutput("help - Show this message.");
-      printOutput("list - List available files.");
-      printOutput("scp - Access SCP-related documents.");
-      printOutput("taskforce - View Task Force operations.");
-      printOutput("redacted - Access redacted or classified files.");
-      printOutput("exit - Exit the terminal.");
-      printOutput("Type 'scp' or 'redacted' to access files.");
-    },
-    'list': function() {
-      printOutput("Listing available directories...");
-      printOutput("/scp - SCP-related files");
-      printOutput("/taskforce - Task Force operations");
-      printOutput("/redacted - Redacted files");
-      printOutput("Type 'scp', 'taskforce', or 'redacted' followed by the file number.");
-    },
-    'scp': function() {
-      simulateFileAccessWithSpinner("SCP-███", () => {
-        accessClassifiedFile("SCP-███");
-      });
-      simulateFileAccessWithSpinner("SCP-████", () => {
-        accessClassifiedFile("SCP-████");
-      });
-      simulateFileAccessWithSpinner("SCP-001 - The Scarlet King", () => {
-        accessClassifiedFile("SCP-001 - The Scarlet King");
-      });
-    },
-    'taskforce': function() {
-      simulateFileAccessWithSpinner("TF-███ - Operation ████", () => {
-        printOutput("TF-███ - Operation ████ - [SECRET]");
-      });
-      simulateFileAccessWithSpinner("TF-████ - Operation ████", () => {
-        printOutput("TF-████ - Operation ████ - [RESTRICTED]");
-      });
-      simulateFileAccessWithSpinner("TF-█████ - Operation █████", () => {
-        printOutput("TF-█████ - Operation █████ - [CLASSIFIED]");
-      });
-    },
-    'redacted': function() {
-      simulateFileAccessWithSpinner("File 001 - [REDACTED]", () => {
-        printOutput("File 001 - [REDACTED] - Access is limited.");
-      });
-      simulateFileAccessWithSpinner("File 002 - [CONFIDENTIAL]", () => {
-        printOutput("File 002 - [CONFIDENTIAL]");
-      });
-      simulateFileAccessWithSpinner("File 003 - [TOP SECRET]", () => {
-        printOutput("File 003 - [TOP SECRET] - Restricted to O5-Council.");
-      });
-    },
-    'exit': function() {
-      printOutput("Exiting terminal...");
-      setTimeout(() => {
-        window.location.reload();
-      }, 1000);
-    }
-  };
-
-  // Event listener for handling command execution
-  inputLine.addEventListener('keydown', function(event) {
-    if (event.key === 'Enter') {
-      const command = inputLine.value.trim();
-      printOutput("&gt; " + command);
-      handleCommand(command);
-      inputLine.value = '';
-      inputLine.focus();
-    }
-  });
-
-  // Handle the command execution
-  function handleCommand(command) {
-    if (commands[command]) {
-      commands[command]();
-    } else {
-      printOutput("Unknown command: " + command);
-      printOutput("Type 'help' for a list of available commands.");
-    }
-  }
-</script>
-
-<style>
-  /* Add a loading spinner for file access */
-  #loading-spinner {
-    display: none;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 50px;
-    height: 50px;
-    border: 6px solid #f3f3f3;
-    border-top: 6px solid #0f0;
-    border-radius: 50%;
-    animation: spin 2s linear infinite;
-  }
-
-  /* Keyframes for spinner animation */
-  @keyframes spin {
-    0% { transform: translate(-50%, -50%) rotate(0deg); }
-    100% { transform: translate(-50%, -50%) rotate(360deg); }
-  }
-</style>
-
-<!-- END OF PART 7 -->
-<!-- PART 8: ADVANCED FILE ACCESS SIMULATION & CLEARANCE LEVELS -->
-<script>
-  // Function to simulate file access based on clearance level
-  function simulateAccessBasedOnClearance(fileName, clearanceLevel, callback) {
-    printOutput("Attempting to access: " + fileName);
-    if (clearanceLevel < 5) { // Assuming level 5 is required for most classified files
-      printOutput("ACCESS DENIED: Insufficient clearance.");
-      printOutput("Current clearance: Level " + clearanceLevel + " - Minimum required: Level 5");
-    } else {
-      showSpinner(true);
-      setTimeout(() => {
-        printOutput(fileName + " - [ACCESS GRANTED]");
-        showSpinner(false);
-        callback();
-      }, 4000); // Simulated delay for higher-level access
-    }
-  }
-
-  // Function to handle advanced access messages based on file category
-  function handleFileCategory(fileName) {
-    switch(fileName) {
-      case "SCP-001 - The Scarlet King":
-        printOutput("File access granted. Warning: Scarlet King's influence is unstable.");
-        printOutput("Highly volatile. Restricted protocols in effect.");
-        break;
-      case "SCP-██████ - The Gatekeeper":
-        printOutput("Gatekeeper protocol: Restricted access. The entity is highly unpredictable.");
-        printOutput("Security breach imminent if not handled by authorized personnel.");
-        break;
-      case "SCP-███ - [REDACTED]":
-        printOutput("File classified. Access granted with temporary clearance.");
-        break;
-      case "TF-█████ - Operation █████":
-        printOutput("Operation ██-███: Classified. Initiating briefing report for O5-Council.");
-        break;
-      default:
-        printOutput(fileName + " - Available for viewing.");
-    }
-  }
-
-  // Adding new files and improving clearance requirements for each category
-  const commands = {
-    'help': function() {
-      printOutput("Available commands:");
-      printOutput("help - Show this message.");
-      printOutput("list - List available files.");
-      printOutput("scp - Access SCP-related documents.");
-      printOutput("taskforce - View Task Force operations.");
-      printOutput("redacted - Access redacted or classified files.");
-      printOutput("exit - Exit the terminal.");
-    },
-    'list': function() {
-      printOutput("Listing available directories...");
-      printOutput("/scp - SCP-related files");
-      printOutput("/taskforce - Task Force operations");
-      printOutput("/redacted - Redacted files");
-      printOutput("Type 'scp', 'taskforce', or 'redacted' followed by the file number.");
-    },
-    'scp': function() {
-      const clearanceLevel = 5; // Adjust for demonstration, this would come from the user session in a full system
-      simulateAccessBasedOnClearance("SCP-███", clearanceLevel, () => {
-        handleFileCategory("SCP-███");
-      });
-      simulateAccessBasedOnClearance("SCP-██████ - The Gatekeeper", clearanceLevel, () => {
-        handleFileCategory("SCP-██████ - The Gatekeeper");
-      });
-      simulateAccessBasedOnClearance("SCP-001 - The Scarlet King", clearanceLevel, () => {
-        handleFileCategory("SCP-001 - The Scarlet King");
-      });
-    },
-    'taskforce': function() {
-      const clearanceLevel = 5;
-      simulateAccessBasedOnClearance("TF-█████ - Operation █████", clearanceLevel, () => {
-        handleFileCategory("TF-█████ - Operation █████");
-      });
-      simulateAccessBasedOnClearance("TF-███ - Operation ████", clearanceLevel, () => {
-        printOutput("TF-███ - Operation ████ - [SECRET]");
-      });
-    },
-    'redacted': function() {
-      const clearanceLevel = 5;
-      simulateAccessBasedOnClearance("File 001 - [REDACTED]", clearanceLevel, () => {
-        printOutput("File 001 - [REDACTED] - Access restricted to O5-Council.");
-      });
-      simulateAccessBasedOnClearance("File 002 - [CONFIDENTIAL]", clearanceLevel, () => {
-        printOutput("File 002 - [CONFIDENTIAL]");
-      });
-      simulateAccessBasedOnClearance("File 003 - [TOP SECRET]", clearanceLevel, () => {
-        printOutput("File 003 - [TOP SECRET] - Restricted to O5-Council.");
-      });
-    },
-    'exit': function() {
-      printOutput("Exiting terminal...");
-      setTimeout(() => {
-        window.location.reload();
-      }, 1000);
-    }
-  };
-
-  // Handle command execution
-  function handleCommand(command) {
-    if (commands[command]) {
-      commands[command]();
-    } else {
-      printOutput("Unknown command: " + command);
-      printOutput("Type 'help' for a list of available commands.");
-    }
-  }
-
-  // Event listener for command input
-  inputLine.addEventListener('keydown', function(event) {
-    if (event.key === 'Enter') {
-      const command = inputLine.value.trim();
-      printOutput("&gt; " + command);
-      handleCommand(command);
-      inputLine.value = '';
-      inputLine.focus();
-    }
-  });
-</script>
-
-<style>
-  /* Loading spinner styles */
-  #loading-spinner {
-    display: none;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 50px;
-    height: 50px;
-    border: 6px solid #f3f3f3;
-    border-top: 6px solid #0f0;
-    border-radius: 50%;
-    animation: spin 2s linear infinite;
-  }
-
-  /* Spinner animation */
-  @keyframes spin {
-    0% { transform: translate(-50%, -50%) rotate(0deg); }
-    100% { transform: translate(-50%, -50%) rotate(360deg); }
-  }
-</style>
-
-<!-- END OF PART 8 -->
-<!-- PART 9: FINALIZING TERMINAL INTERFACE AND EXIT FUNCTIONALITY -->
-<script>
-  // Function to finalize the terminal shutdown and reset everything
-  function finalizeExit() {
-    printOutput("Shutting down O5 Council terminal...");
-    setTimeout(() => {
-      printOutput("System reset in 3... 2... 1...");
-      setTimeout(() => {
-        window.location.reload(); // Reload the page to simulate terminal reboot
-      }, 1000);
+      printOutput(`${file.title} - [${file.status}]`, { type: 'important' });
+      printOutput("Warning: Sensitive file. Higher clearance required.", { type: 'warning' });
+      printOutput(`Access Log: File ${file.title} accessed at ${new Date().toLocaleTimeString()}`, { type: 'normal' });
     }, 2000);
+  } else {
+    printOutput(`File ${fileId} not found in ${directory}.`, { type: 'warning' });
   }
+}
 
-  // Adding a confirmation prompt when exiting
-  function confirmExit() {
-    printOutput("Are you sure you want to exit the terminal? (Y/N)");
-    inputLine.addEventListener('keydown', function(event) {
-      if (event.key === 'Enter') {
-        const command = inputLine.value.trim().toLowerCase();
-        if (command === 'y') {
-          finalizeExit();
-        } else if (command === 'n') {
-          printOutput("Exit cancelled.");
-        } else {
-          printOutput("Invalid option. Please type 'Y' for yes or 'N' for no.");
-        }
-        inputLine.value = '';
-        inputLine.focus();
+// Command enhancements: Modifying 'list' and 'open' commands to use directory-based simulation
+const commands = {
+  'help': function() {
+    printOutput("Available Commands:", { type: 'important' });
+    printOutput("list <directory> - List files in the specified directory (scp, mtf, redacted).", { type: 'normal' });
+    printOutput("open <directory> <file_id> - Open a specific file in the specified directory.", { type: 'normal' });
+    printOutput("terminate - End the current session and shutdown the terminal.", { type: 'normal' });
+    printOutput("clear - Clear the terminal screen and reset session.", { type: 'normal' });
+  },
+
+  'list': function() {
+    const directory = inputLine.value.trim().split(' ')[1];
+    if (directory && fileDirectories[directory]) {
+      listFiles(directory);
+    } else {
+      printOutput("Usage: 'list <directory>' where <directory> can be 'scp', 'mtf', or 'redacted'.", { type: 'warning' });
+    }
+  },
+
+  'open': function() {
+    const args = inputLine.value.trim().split(' ');
+    const directory = args[1];
+    const fileId = args[2];
+    if (directory && fileId) {
+      openFile(directory, fileId);
+    } else {
+      printOutput("Usage: 'open <directory> <file_id>'", { type: 'warning' });
+    }
+  },
+
+  'terminate': function() {
+    printOutput("Terminating session...", { type: 'warning' });
+    setTimeout(() => {
+      printOutput("Session ended. We die in the dark so you can live in the light.", { type: 'motto' });
+      setTimeout(() => {
+        window.location.reload(); // Refresh the page or terminate.
+      }, 1500);
+    }, 1000);
+  },
+
+  'clear': function() {
+    terminalOutput.innerHTML = ''; // Clear terminal content
+    printOutput("Session logs cleared.", { type: 'motto' });
+    printOutput("Welcome to the O5 Council Terminal. Type 'help' for commands.", { type: 'important' });
+  }
+};
+
+// Handle Command Input with directory-based logic
+inputLine.addEventListener('keydown', function(event) {
+  if (event.key === 'Enter') {
+    const command = inputLine.value.trim();
+    printOutput(`> ${command}`, { type: 'normal' });
+    if (commands[command.split(' ')[0]]) {
+      commands[command.split(' ')[0]]();
+    } else {
+      printOutput(`Unknown command: ${command}`, { type: 'warning' });
+      printOutput("Type 'help' for a list of available commands.", { type: 'normal' });
+    }
+    inputLine.value = ''; // Clear the input
+    inputLine.focus();
+  }
+});
+// script.js — PART 12: User Session Management and Security
+
+// Basic authentication system for O5 Council Terminal
+let currentUser = null;
+let sessionTimeout = null;
+
+// Define users and their roles for access control
+const users = {
+  'admin': { password: 'admin123', role: 'Administrator' },
+  'director': { password: 'director123', role: 'O5 Council' },
+  'researcher': { password: 'researcher123', role: 'Researcher' }
+};
+
+// Check if the user is logged in or not
+function isLoggedIn() {
+  return currentUser !== null;
+}
+
+// Handle user login
+function loginUser(username, password) {
+  const user = users[username];
+  if (user && user.password === password) {
+    currentUser = username;
+    printOutput(`Login successful. Welcome, ${user.role}.`, { type: 'important' });
+    startSessionTimeout();
+    displayHelpAfterLogin();
+  } else {
+    printOutput("Login failed. Invalid username or password.", { type: 'warning' });
+  }
+}
+
+// Start a session timeout to automatically log the user out after a period of inactivity
+function startSessionTimeout() {
+  if (sessionTimeout) clearTimeout(sessionTimeout);
+  sessionTimeout = setTimeout(() => {
+    logoutUser();
+    printOutput("Session timed out due to inactivity. Please log in again.", { type: 'warning' });
+  }, 600000); // 10 minutes timeout
+}
+
+// Log out the user
+function logoutUser() {
+  currentUser = null;
+  clearTimeout(sessionTimeout);
+  printOutput("You have been logged out.", { type: 'warning' });
+  printOutput("Session expired. Please log in again.", { type: 'important' });
+  showLoginForm();
+}
+
+// Show login form to the user
+function showLoginForm() {
+  terminalOutput.innerHTML = ''; // Clear the terminal output
+  printOutput("Enter your username and password to access the terminal:", { type: 'important' });
+  printOutput("Username:", { type: 'normal' });
+  const usernameInput = document.createElement('input');
+  usernameInput.placeholder = 'Enter your username...';
+  terminalOutput.appendChild(usernameInput);
+  printOutput("Password:", { type: 'normal' });
+  const passwordInput = document.createElement('input');
+  passwordInput.placeholder = 'Enter your password...';
+  passwordInput.type = 'password';
+  terminalOutput.appendChild(passwordInput);
+  const loginButton = document.createElement('button');
+  loginButton.textContent = 'Login';
+  terminalOutput.appendChild(loginButton);
+  loginButton.addEventListener('click', () => {
+    const username = usernameInput.value.trim();
+    const password = passwordInput.value.trim();
+    loginUser(username, password);
+  });
+}
+
+// Show help message after successful login
+function displayHelpAfterLogin() {
+  printOutput("Welcome to the O5 Council Terminal.", { type: 'important' });
+  printOutput("You are logged in as: " + users[currentUser].role, { type: 'normal' });
+  printOutput("Available Commands:", { type: 'important' });
+  printOutput("list <directory> - List files in the specified directory (scp, mtf, redacted).", { type: 'normal' });
+  printOutput("open <directory> <file_id> - Open a specific file in the specified directory.", { type: 'normal' });
+  printOutput("terminate - End the current session and shutdown the terminal.", { type: 'normal' });
+  printOutput("clear - Clear the terminal screen and reset session.", { type: 'normal' });
+}
+
+// Command enhancements to include login/logout functionality
+const commands = {
+  'help': function() {
+    if (!isLoggedIn()) {
+      printOutput("You must log in first to access commands.", { type: 'warning' });
+    } else {
+      displayHelpAfterLogin();
+    }
+  },
+
+  'list': function() {
+    if (!isLoggedIn()) {
+      printOutput("You must log in first to access files.", { type: 'warning' });
+    } else {
+      const directory = inputLine.value.trim().split(' ')[1];
+      if (directory && fileDirectories[directory]) {
+        listFiles(directory);
+      } else {
+        printOutput("Usage: 'list <directory>' where <directory> can be 'scp', 'mtf', or 'redacted'.", { type: 'warning' });
       }
+    }
+  },
+
+  'open': function() {
+    if (!isLoggedIn()) {
+      printOutput("You must log in first to access files.", { type: 'warning' });
+    } else {
+      const args = inputLine.value.trim().split(' ');
+      const directory = args[1];
+      const fileId = args[2];
+      if (directory && fileId) {
+        openFile(directory, fileId);
+      } else {
+        printOutput("Usage: 'open <directory> <file_id>'", { type: 'warning' });
+      }
+    }
+  },
+
+  'terminate': function() {
+    if (!isLoggedIn()) {
+      printOutput("You must log in first to terminate the session.", { type: 'warning' });
+    } else {
+      printOutput("Terminating session...", { type: 'warning' });
+      setTimeout(() => {
+        printOutput("Session ended. We die in the dark so you can live in the light.", { type: 'motto' });
+        setTimeout(() => {
+          logoutUser();
+          window.location.reload();
+        }, 1500);
+      }, 1000);
+    }
+  },
+
+  'clear': function() {
+    if (!isLoggedIn()) {
+      printOutput("You must log in first to use this command.", { type: 'warning' });
+    } else {
+      terminalOutput.innerHTML = '';
+      printOutput("Session logs cleared.", { type: 'motto' });
+      printOutput("Welcome to the O5 Council Terminal. Type 'help' for commands.", { type: 'important' });
+    }
+  }
+};
+
+// Initialize the login process when the page is loaded
+window.onload = function() {
+  showLoginForm(); // Show the login form initially
+};
+// script.js — PART 13: Advanced File Access Logging and Session History
+
+// Log file accesses
+let accessLogs = [];
+
+// Function to record file access
+function logFileAccess(user, file, action) {
+  const timestamp = new Date().toISOString();
+  accessLogs.push({ timestamp, user, file, action });
+  console.log(`Access Log: [${timestamp}] User: ${user}, File: ${file}, Action: ${action}`);
+}
+
+// Display log history in the terminal for admin
+function viewAccessLogs() {
+  if (users[currentUser].role !== 'Administrator') {
+    printOutput("You do not have permission to view access logs.", { type: 'warning' });
+    return;
+  }
+  printOutput("Access Log History:", { type: 'important' });
+  if (accessLogs.length === 0) {
+    printOutput("No file access logs available.", { type: 'normal' });
+  } else {
+    accessLogs.forEach(log => {
+      printOutput(`[${log.timestamp}] User: ${log.user} accessed ${log.file} with action: ${log.action}`, { type: 'normal' });
     });
   }
+}
 
-  // Improve the exit functionality to prompt before shutdown
-  const commands = {
-    'help': function() {
-      printOutput("Available commands:");
-      printOutput("help - Display this message.");
-      printOutput("list - List available files.");
-      printOutput("scp - Access SCP-related documents.");
-      printOutput("taskforce - View Task Force operations.");
-      printOutput("redacted - Access Redacted/Secret files.");
-      printOutput("exit - Exit the terminal.");
-    },
-    'list': function() {
-      printOutput("Listing available files...");
-      printOutput("/scp - SCP-related files");
-      printOutput("/taskforce - Task Force operations");
-      printOutput("/redacted - Redacted files");
-      printOutput("Type 'scp', 'taskforce', or 'redacted' followed by the file number.");
-    },
-    'scp': function() {
-      const clearanceLevel = 5; // For this demonstration, let's assume the user has level 5 clearance
-      simulateAccessBasedOnClearance("SCP-███", clearanceLevel, () => {
-        handleFileCategory("SCP-███");
-      });
-      simulateAccessBasedOnClearance("SCP-██████ - The Gatekeeper", clearanceLevel, () => {
-        handleFileCategory("SCP-██████ - The Gatekeeper");
-      });
-      simulateAccessBasedOnClearance("SCP-001 - The Scarlet King", clearanceLevel, () => {
-        handleFileCategory("SCP-001 - The Scarlet King");
-      });
-    },
-    'taskforce': function() {
-      const clearanceLevel = 5;
-      simulateAccessBasedOnClearance("TF-█████ - Operation █████", clearanceLevel, () => {
-        handleFileCategory("TF-█████ - Operation █████");
-      });
-      simulateAccessBasedOnClearance("TF-███ - Operation ████", clearanceLevel, () => {
-        printOutput("TF-███ - Operation ████ - [SECRET]");
-      });
-    },
-    'redacted': function() {
-      const clearanceLevel = 5;
-      simulateAccessBasedOnClearance("File 001 - [REDACTED]", clearanceLevel, () => {
-        printOutput("File 001 - [REDACTED] - Access restricted to O5-Council.");
-      });
-      simulateAccessBasedOnClearance("File 002 - [CONFIDENTIAL]", clearanceLevel, () => {
-        printOutput("File 002 - [CONFIDENTIAL]");
-      });
-      simulateAccessBasedOnClearance("File 003 - [TOP SECRET]", clearanceLevel, () => {
-        printOutput("File 003 - [TOP SECRET] - Restricted to O5-Council.");
-      });
-    },
-    'exit': function() {
-      confirmExit(); // Call the confirmation function before shutting down
+// Clear access logs for session security
+function clearAccessLogs() {
+  if (users[currentUser].role !== 'Administrator') {
+    printOutput("You do not have permission to clear access logs.", { type: 'warning' });
+    return;
+  }
+  accessLogs = [];
+  printOutput("Access logs cleared.", { type: 'motto' });
+}
+
+// Modify the 'open' command to include logging functionality
+const commands = {
+  'help': function() {
+    if (!isLoggedIn()) {
+      printOutput("You must log in first to access commands.", { type: 'warning' });
+    } else {
+      displayHelpAfterLogin();
     }
+  },
+
+  'list': function() {
+    if (!isLoggedIn()) {
+      printOutput("You must log in first to access files.", { type: 'warning' });
+    } else {
+      const directory = inputLine.value.trim().split(' ')[1];
+      if (directory && fileDirectories[directory]) {
+        listFiles(directory);
+      } else {
+        printOutput("Usage: 'list <directory>' where <directory> can be 'scp', 'mtf', or 'redacted'.", { type: 'warning' });
+      }
+    }
+  },
+
+  'open': function() {
+    if (!isLoggedIn()) {
+      printOutput("You must log in first to access files.", { type: 'warning' });
+    } else {
+      const args = inputLine.value.trim().split(' ');
+      const directory = args[1];
+      const fileId = args[2];
+      if (directory && fileId) {
+        // Log the file access before opening the file
+        logFileAccess(currentUser, `${directory}/${fileId}`, 'open');
+        openFile(directory, fileId);
+      } else {
+        printOutput("Usage: 'open <directory> <file_id>'", { type: 'warning' });
+      }
+    }
+  },
+
+  'terminate': function() {
+    if (!isLoggedIn()) {
+      printOutput("You must log in first to terminate the session.", { type: 'warning' });
+    } else {
+      printOutput("Terminating session...", { type: 'warning' });
+      setTimeout(() => {
+        printOutput("Session ended. We die in the dark so you can live in the light.", { type: 'motto' });
+        setTimeout(() => {
+          logoutUser();
+          window.location.reload();
+        }, 1500);
+      }, 1000);
+    }
+  },
+
+  'clear': function() {
+    if (!isLoggedIn()) {
+      printOutput("You must log in first to use this command.", { type: 'warning' });
+    } else {
+      terminalOutput.innerHTML = '';
+      printOutput("Session logs cleared.", { type: 'motto' });
+      printOutput("Welcome to the O5 Council Terminal. Type 'help' for commands.", { type: 'important' });
+    }
+  },
+
+  // New 'view_logs' command for the Administrator role to view the access logs
+  'view_logs': function() {
+    if (!isLoggedIn()) {
+      printOutput("You must log in first to access logs.", { type: 'warning' });
+    } else {
+      viewAccessLogs();
+    }
+  },
+
+  // New 'clear_logs' command for the Administrator role to clear the access logs
+  'clear_logs': function() {
+    if (!isLoggedIn()) {
+      printOutput("You must log in first to clear the logs.", { type: 'warning' });
+    } else {
+      clearAccessLogs();
+    }
+  }
+};
+
+// Modify file opening function to log the user activity
+function openFile(directory, fileId) {
+  printOutput(`Opening file: ${directory}/${fileId}...`, { type: 'important' });
+  setTimeout(() => {
+    printOutput(`File ${directory}/${fileId} opened successfully.`, { type: 'normal' });
+  }, 1000);
+}
+
+// Event listener for the command input
+inputLine.addEventListener('keydown', function(event) {
+  if (event.key === 'Enter') {
+    const command = inputLine.value.trim();
+    printOutput("&gt; " + command);
+    handleCommand(command);
+    inputLine.value = '';
+    inputLine.focus();
+  }
+});
+// script.js — PART 14: Enhanced File Security and Encryption
+
+// Define encrypted files with restricted access
+const encryptedFiles = {
+  'SCP-001': {
+    content: 'Encrypted Data: This file is only accessible by authorized personnel.',
+    decryptedContent: 'SCP-001: The Gate Guardian - A powerful entity that guards the Gate to the origin of all universes. [REDACTED]',
+    restricted: true,
+  },
+  'SCP-███': {
+    content: 'Encrypted Data: This file is only accessible by authorized personnel.',
+    decryptedContent: 'SCP-███: The Scarlet King - The progenitor of chaos, seeking to destroy all of creation. [CLASSIFIED]',
+    restricted: true,
+  },
+  'SCP-████': {
+    content: 'Encrypted Data: This file is only accessible by authorized personnel.',
+    decryptedContent: 'SCP-████: [DATA REDACTED] - A highly dangerous anomaly whose influence spans millennia. [TOP SECRET]',
+    restricted: true,
+  }
+};
+
+// User roles for access control
+const userRoles = {
+  'Administrator': ['SCP-001', 'SCP-███', 'SCP-████'],
+  'O5 Council': ['SCP-001', 'SCP-███'],
+  'Site Administrator': ['SCP-███'],
+  'Standard User': [],
+};
+
+// Function to check if user has access to a specific file
+function hasAccessToFile(userRole, fileId) {
+  return userRoles[userRole].includes(fileId);
+}
+
+// Function to decrypt and view an encrypted file
+function decryptFile(fileId, userRole) {
+  if (encryptedFiles[fileId]) {
+    if (hasAccessToFile(userRole, fileId)) {
+      return encryptedFiles[fileId].decryptedContent;
+    } else {
+      return 'Access Denied: You do not have the necessary clearance to decrypt this file.';
+    }
+  } else {
+    return 'File not found.';
+  }
+}
+
+// Function to open encrypted files
+function openEncryptedFile(fileId) {
+  const userRole = users[currentUser].role;
+
+  if (encryptedFiles[fileId].restricted) {
+    const decryptedContent = decryptFile(fileId, userRole);
+    printOutput(decryptedContent, { type: 'important' });
+  } else {
+    printOutput(encryptedFiles[fileId].content, { type: 'normal' });
+  }
+}
+
+// Modify the 'open' command to handle encrypted files
+const commands = {
+  'help': function() {
+    if (!isLoggedIn()) {
+      printOutput("You must log in first to access commands.", { type: 'warning' });
+    } else {
+      displayHelpAfterLogin();
+    }
+  },
+
+  'list': function() {
+    if (!isLoggedIn()) {
+      printOutput("You must log in first to access files.", { type: 'warning' });
+    } else {
+      const directory = inputLine.value.trim().split(' ')[1];
+      if (directory && fileDirectories[directory]) {
+        listFiles(directory);
+      } else {
+        printOutput("Usage: 'list <directory>' where <directory> can be 'scp', 'mtf', or 'redacted'.", { type: 'warning' });
+      }
+    }
+  },
+
+  'open': function() {
+    if (!isLoggedIn()) {
+      printOutput("You must log in first to access files.", { type: 'warning' });
+    } else {
+      const args = inputLine.value.trim().split(' ');
+      const directory = args[1];
+      const fileId = args[2];
+      if (directory && fileId) {
+        // Log the file access before opening the file
+        logFileAccess(currentUser, `${directory}/${fileId}`, 'open');
+        if (directory === 'scp') {
+          openEncryptedFile(fileId);
+        } else {
+          openFile(directory, fileId);
+        }
+      } else {
+        printOutput("Usage: 'open <directory> <file_id>'", { type: 'warning' });
+      }
+    }
+  },
+
+  'terminate': function() {
+    if (!isLoggedIn()) {
+      printOutput("You must log in first to terminate the session.", { type: 'warning' });
+    } else {
+      printOutput("Terminating session...", { type: 'warning' });
+      setTimeout(() => {
+        printOutput("Session ended. We die in the dark so you can live in the light.", { type: 'motto' });
+        setTimeout(() => {
+          logoutUser();
+          window.location.reload();
+        }, 1500);
+      }, 1000);
+    }
+  },
+
+  'clear': function() {
+    if (!isLoggedIn()) {
+      printOutput("You must log in first to use this command.", { type: 'warning' });
+    } else {
+      terminalOutput.innerHTML = '';
+      printOutput("Session logs cleared.", { type: 'motto' });
+      printOutput("Welcome to the O5 Council Terminal. Type 'help' for commands.", { type: 'important' });
+    }
+  },
+
+  'view_logs': function() {
+    if (!isLoggedIn()) {
+      printOutput("You must log in first to access logs.", { type: 'warning' });
+    } else {
+      viewAccessLogs();
+    }
+  },
+
+  'clear_logs': function() {
+    if (!isLoggedIn()) {
+      printOutput("You must log in first to clear the logs.", { type: 'warning' });
+    } else {
+      clearAccessLogs();
+    }
+  }
+};
+
+// Event listener for the command input
+inputLine.addEventListener('keydown', function(event) {
+  if (event.key === 'Enter') {
+    const command = inputLine.value.trim();
+    printOutput("&gt; " + command);
+    handleCommand(command);
+    inputLine.value = '';
+    inputLine.focus();
+  }
+});
+// script.js — PART 15: File Integrity and Audit Trails
+
+// Initialize an array to store access logs
+let accessLogs = [];
+
+// Function to log file access details
+function logFileAccess(user, fileId, action) {
+  const timestamp = new Date().toISOString();
+  accessLogs.push({
+    user: user,
+    fileId: fileId,
+    action: action,
+    timestamp: timestamp
+  });
+  printOutput(`Access Log: User '${user}' performed '${action}' on '${fileId}' at ${timestamp}.`, { type: 'log' });
+}
+
+// Function to display access logs to an authorized user
+function viewAccessLogs() {
+  const userRole = users[currentUser].role;
+  if (userRole === 'Administrator' || userRole === 'O5 Council') {
+    printOutput("Access Logs:", { type: 'important' });
+    accessLogs.forEach(log => {
+      printOutput(`User: ${log.user} | File: ${log.fileId} | Action: ${log.action} | Timestamp: ${log.timestamp}`, { type: 'log' });
+    });
+  } else {
+    printOutput("Access Denied: You do not have sufficient clearance to view access logs.", { type: 'warning' });
+  }
+}
+
+// Function to clear all access logs (only available to Admin)
+function clearAccessLogs() {
+  const userRole = users[currentUser].role;
+  if (userRole === 'Administrator') {
+    accessLogs = [];
+    printOutput("All access logs have been cleared.", { type: 'important' });
+  } else {
+    printOutput("Access Denied: You do not have sufficient clearance to clear the access logs.", { type: 'warning' });
+  }
+}
+
+// Function to ensure file integrity by performing periodic checksum verification
+function verifyFileIntegrity(fileId) {
+  // Dummy checksum validation for the example
+  const checksumDatabase = {
+    'SCP-001': 'a1b2c3d4e5f6789abc',
+    'SCP-███': 'a3d4e5f6789abcd123',
+    'SCP-████': 'd4e5f6789abc123fgh'
   };
 
-  // Handle the command input from the user
-  function handleCommand(command) {
-    if (commands[command]) {
-      commands[command]();
+  if (checksumDatabase[fileId]) {
+    const currentChecksum = checksumDatabase[fileId];
+    const fileContent = encryptedFiles[fileId]?.decryptedContent || 'No content available.';
+    const computedChecksum = generateChecksum(fileContent);
+    
+    if (currentChecksum === computedChecksum) {
+      printOutput(`${fileId} integrity check: PASSED`, { type: 'important' });
     } else {
-      printOutput("Unknown command: " + command);
-      printOutput("Type 'help' for a list of available commands.");
+      printOutput(`${fileId} integrity check: FAILED. File content has been modified!`, { type: 'warning' });
+      logFileAccess(currentUser, fileId, 'FAILED INTEGRITY CHECK');
+    }
+  } else {
+    printOutput(`${fileId} not found in checksum database.`, { type: 'warning' });
+  }
+}
+
+// Dummy checksum generator function for example
+function generateChecksum(content) {
+  let hash = 0;
+  for (let i = 0; i < content.length; i++) {
+    hash = (hash << 5) - hash + content.charCodeAt(i);
+    hash |= 0; // Convert to 32-bit integer
+  }
+  return hash.toString(16); // Return as hexadecimal string
+}
+
+// Modify the 'open' command to include integrity checks
+const commands = {
+  'help': function() {
+    if (!isLoggedIn()) {
+      printOutput("You must log in first to access commands.", { type: 'warning' });
+    } else {
+      displayHelpAfterLogin();
+    }
+  },
+
+  'list': function() {
+    if (!isLoggedIn()) {
+      printOutput("You must log in first to access files.", { type: 'warning' });
+    } else {
+      const directory = inputLine.value.trim().split(' ')[1];
+      if (directory && fileDirectories[directory]) {
+        listFiles(directory);
+      } else {
+        printOutput("Usage: 'list <directory>' where <directory> can be 'scp', 'mtf', or 'redacted'.", { type: 'warning' });
+      }
+    }
+  },
+
+  'open': function() {
+    if (!isLoggedIn()) {
+      printOutput("You must log in first to access files.", { type: 'warning' });
+    } else {
+      const args = inputLine.value.trim().split(' ');
+      const directory = args[1];
+      const fileId = args[2];
+      if (directory && fileId) {
+        logFileAccess(currentUser, `${directory}/${fileId}`, 'open');
+        if (directory === 'scp') {
+          openEncryptedFile(fileId);
+          verifyFileIntegrity(fileId);  // Check file integrity
+        } else {
+          openFile(directory, fileId);
+        }
+      } else {
+        printOutput("Usage: 'open <directory> <file_id>'", { type: 'warning' });
+      }
+    }
+  },
+
+  'terminate': function() {
+    if (!isLoggedIn()) {
+      printOutput("You must log in first to terminate the session.", { type: 'warning' });
+    } else {
+      printOutput("Terminating session...", { type: 'warning' });
+      setTimeout(() => {
+        printOutput("Session ended. We die in the dark so you can live in the light.", { type: 'motto' });
+        setTimeout(() => {
+          logoutUser();
+          window.location.reload();
+        }, 1500);
+      }, 1000);
+    }
+  },
+
+  'clear': function() {
+    if (!isLoggedIn()) {
+      printOutput("You must log in first to use this command.", { type: 'warning' });
+    } else {
+      terminalOutput.innerHTML = '';
+      printOutput("Session logs cleared.", { type: 'motto' });
+      printOutput("Welcome to the O5 Council Terminal. Type 'help' for commands.", { type: 'important' });
+    }
+  },
+
+  'view_logs': function() {
+    if (!isLoggedIn()) {
+      printOutput("You must log in first to access logs.", { type: 'warning' });
+    } else {
+      viewAccessLogs();
+    }
+  },
+
+  'clear_logs': function() {
+    if (!isLoggedIn()) {
+      printOutput("You must log in first to clear the logs.", { type: 'warning' });
+    } else {
+      clearAccessLogs();
+    }
+  },
+
+  'verify_integrity': function() {
+    if (!isLoggedIn()) {
+      printOutput("You must log in first to use this command.", { type: 'warning' });
+    } else {
+      const fileId = inputLine.value.trim().split(' ')[1];
+      if (fileId) {
+        verifyFileIntegrity(fileId);
+      } else {
+        printOutput("Usage: 'verify_integrity <file_id>'", { type: 'warning' });
+      }
     }
   }
+};
 
-  // Event listener for command input
-  inputLine.addEventListener('keydown', function(event) {
-    if (event.key === 'Enter') {
-      const command = inputLine.value.trim();
-      printOutput("&gt; " + command);
-      handleCommand(command);
-      inputLine.value = '';
-      inputLine.focus();
+// Event listener for command input
+inputLine.addEventListener('keydown', function(event) {
+  if (event.key === 'Enter') {
+    const command = inputLine.value.trim();
+    printOutput("&gt; " + command);
+    handleCommand(command);
+    inputLine.value = '';
+    inputLine.focus();
+  }
+});
+// script.js — PART 16: Session Management and Advanced Commands
+
+// Keep track of active sessions and users
+let activeSessions = [];
+let currentUser = null;
+let userSessionStart = null;
+
+// Function to login user
+function loginUser(username, password) {
+  const user = users[username];
+  if (user && user.password === password) {
+    currentUser = username;
+    userSessionStart = new Date();
+    activeSessions.push({ user: username, sessionStart: userSessionStart });
+    printOutput(`Welcome, ${username}. You have successfully logged in.`, { type: 'important' });
+  } else {
+    printOutput("Login failed. Please check your credentials.", { type: 'error' });
+  }
+}
+
+// Function to logout the user
+function logoutUser() {
+  if (currentUser) {
+    printOutput(`Goodbye, ${currentUser}. You have been logged out.`, { type: 'important' });
+    activeSessions = activeSessions.filter(session => session.user !== currentUser);
+    currentUser = null;
+    userSessionStart = null;
+  } else {
+    printOutput("You are not logged in.", { type: 'warning' });
+  }
+}
+
+// Function to check if user is logged in
+function isLoggedIn() {
+  return currentUser !== null;
+}
+
+// Command to display session info
+const commands = {
+  'help': function() {
+    if (!isLoggedIn()) {
+      printOutput("You must log in first to access commands.", { type: 'warning' });
+    } else {
+      displayHelpAfterLogin();
     }
+  },
+
+  'list': function() {
+    if (!isLoggedIn()) {
+      printOutput("You must log in first to access files.", { type: 'warning' });
+    } else {
+      const directory = inputLine.value.trim().split(' ')[1];
+      if (directory && fileDirectories[directory]) {
+        listFiles(directory);
+      } else {
+        printOutput("Usage: 'list <directory>' where <directory> can be 'scp', 'mtf', or 'redacted'.", { type: 'warning' });
+      }
+    }
+  },
+
+  'open': function() {
+    if (!isLoggedIn()) {
+      printOutput("You must log in first to access files.", { type: 'warning' });
+    } else {
+      const args = inputLine.value.trim().split(' ');
+      const directory = args[1];
+      const fileId = args[2];
+      if (directory && fileId) {
+        logFileAccess(currentUser, `${directory}/${fileId}`, 'open');
+        if (directory === 'scp') {
+          openEncryptedFile(fileId);
+          verifyFileIntegrity(fileId);  // Check file integrity
+        } else {
+          openFile(directory, fileId);
+        }
+      } else {
+        printOutput("Usage: 'open <directory> <file_id>'", { type: 'warning' });
+      }
+    }
+  },
+
+  'terminate': function() {
+    if (!isLoggedIn()) {
+      printOutput("You must log in first to terminate the session.", { type: 'warning' });
+    } else {
+      printOutput("Terminating session...", { type: 'warning' });
+      setTimeout(() => {
+        printOutput("Session ended. We die in the dark so you can live in the light.", { type: 'motto' });
+        setTimeout(() => {
+          logoutUser();
+          window.location.reload();
+        }, 1500);
+      }, 1000);
+    }
+  },
+
+  'clear': function() {
+    if (!isLoggedIn()) {
+      printOutput("You must log in first to use this command.", { type: 'warning' });
+    } else {
+      terminalOutput.innerHTML = '';
+      printOutput("Session logs cleared.", { type: 'motto' });
+      printOutput("Welcome to the O5 Council Terminal. Type 'help' for commands.", { type: 'important' });
+    }
+  },
+
+  'view_logs': function() {
+    if (!isLoggedIn()) {
+      printOutput("You must log in first to access logs.", { type: 'warning' });
+    } else {
+      viewAccessLogs();
+    }
+  },
+
+  'clear_logs': function() {
+    if (!isLoggedIn()) {
+      printOutput("You must log in first to clear the logs.", { type: 'warning' });
+    } else {
+      clearAccessLogs();
+    }
+  },
+
+  'verify_integrity': function() {
+    if (!isLoggedIn()) {
+      printOutput("You must log in first to use this command.", { type: 'warning' });
+    } else {
+      const fileId = inputLine.value.trim().split(' ')[1];
+      if (fileId) {
+        verifyFileIntegrity(fileId);
+      } else {
+        printOutput("Usage: 'verify_integrity <file_id>'", { type: 'warning' });
+      }
+    }
+  },
+
+  // Session Command to show the current user and their login time
+  'session_info': function() {
+    if (isLoggedIn()) {
+      const sessionDuration = ((new Date() - userSessionStart) / 1000).toFixed(0);
+      printOutput(`User: ${currentUser}`, { type: 'important' });
+      printOutput(`Login Time: ${userSessionStart.toISOString()}`, { type: 'important' });
+      printOutput(`Session Duration: ${sessionDuration} seconds`, { type: 'important' });
+    } else {
+      printOutput("You must log in first to view session information.", { type: 'warning' });
+    }
+  },
+
+  // Command to check all active sessions (Admin only)
+  'active_sessions': function() {
+    if (!isLoggedIn() || users[currentUser].role !== 'Administrator') {
+      printOutput("Access Denied: You must be an Administrator to view active sessions.", { type: 'warning' });
+    } else {
+      printOutput("Active Sessions:", { type: 'important' });
+      activeSessions.forEach(session => {
+        printOutput(`User: ${session.user} | Session Start: ${session.sessionStart.toISOString()}`, { type: 'log' });
+      });
+    }
+  },
+
+  // Command to logout a user (Admin only)
+  'logout_user': function() {
+    if (!isLoggedIn() || users[currentUser].role !== 'Administrator') {
+      printOutput("Access Denied: You must be an Administrator to log out other users.", { type: 'warning' });
+    } else {
+      const targetUser = inputLine.value.trim().split(' ')[1];
+      if (targetUser && users[targetUser]) {
+        const targetSession = activeSessions.find(session => session.user === targetUser);
+        if (targetSession) {
+          activeSessions = activeSessions.filter(session => session.user !== targetUser);
+          printOutput(`User '${targetUser}' has been logged out.`, { type: 'important' });
+        } else {
+          printOutput(`User '${targetUser}' is not currently logged in.`, { type: 'warning' });
+        }
+      } else {
+        printOutput("Usage: 'logout_user <username>'", { type: 'warning' });
+      }
+    }
+  },
+
+  // Command to reset a user's password (Admin only)
+  'reset_password': function() {
+    if (!isLoggedIn() || users[currentUser].role !== 'Administrator') {
+      printOutput("Access Denied: You must be an Administrator to reset user passwords.", { type: 'warning' });
+    } else {
+      const targetUser = inputLine.value.trim().split(' ')[1];
+      const newPassword = inputLine.value.trim().split(' ')[2];
+      if (targetUser && newPassword && users[targetUser]) {
+        users[targetUser].password = newPassword;
+        printOutput(`Password for user '${targetUser}' has been reset.`, { type: 'important' });
+      } else {
+        printOutput("Usage: 'reset_password <username> <new_password>'", { type: 'warning' });
+      }
+    }
+  }
+};
+
+// Event listener for command input
+inputLine.addEventListener('keydown', function(event) {
+  if (event.key === 'Enter') {
+    const command = inputLine.value.trim();
+    printOutput("&gt; " + command);
+    handleCommand(command);
+    inputLine.value = '';
+    inputLine.focus();
+  }
+});
+// script.js — PART 17: Detailed File System Management
+
+// Simulate file directories and their files
+const fileDirectories = {
+  scp: ['SCP-001', 'SCP-████', 'SCP-█████'],
+  mtf: ['MTF-████', 'MTF-███', 'MTF-██████'],
+  redacted: ['File-001', 'File-002', 'File-003']
+};
+
+// Simulate file access logs (only for admin users)
+let fileAccessLogs = [];
+
+// Function to list files in a directory
+function listFiles(directory) {
+  printOutput(`Listing files in directory '${directory}'...`, { type: 'important' });
+  const files = fileDirectories[directory];
+  if (files) {
+    files.forEach(file => {
+      printOutput(file, { type: 'log' });
+    });
+  } else {
+    printOutput("Directory not found. Available directories: 'scp', 'mtf', 'redacted'.", { type: 'warning' });
+  }
+}
+
+// Function to open a file (simulates loading and viewing file content)
+function openFile(directory, fileId) {
+  printOutput(`Accessing ${directory}/${fileId}...`, { type: 'important' });
+  setTimeout(() => {
+    const fileContent = getFileContent(directory, fileId);
+    if (fileContent) {
+      printOutput(`File Content: ${fileContent}`, { type: 'log' });
+    } else {
+      printOutput("File not found or access denied.", { type: 'error' });
+    }
+  }, 1500);
+}
+
+// Function to fetch file content based on directory and fileId
+function getFileContent(directory, fileId) {
+  const content = {
+    'scp': {
+      'SCP-001': "Classified information on SCP-001, the most dangerous anomaly.",
+      'SCP-████': "Classified information on SCP-████, a top-secret anomaly under extreme containment.",
+      'SCP-█████': "Confidential files on SCP-█████, details are heavily redacted."
+    },
+    'mtf': {
+      'MTF-████': "Mission logs of MTF Unit ████, operation status: restricted.",
+      'MTF-███': "Operation ███ — classified details of engagement with hostile entities.",
+      'MTF-██████': "Mission log — operation ██████; redacted data unavailable."
+    },
+    'redacted': {
+      'File-001': "Redacted — Classified files related to an unnamed operation, details unavailable.",
+      'File-002': "Restricted access — Contains top-secret intel regarding the SCP Foundation's activities.",
+      'File-003': "Highly sensitive data, classified for top-level clearance only."
+    }
+  };
+  
+  return content[directory] && content[directory][fileId] ? content[directory][fileId] : null;
+}
+
+// Function to log file access for auditing purposes
+function logFileAccess(user, filePath, action) {
+  const timestamp = new Date().toISOString();
+  fileAccessLogs.push({ user, filePath, action, timestamp });
+  if (users[currentUser].role === 'Administrator') {
+    printOutput(`[Audit Log] ${user} accessed ${filePath} for action: ${action} at ${timestamp}`, { type: 'log' });
+  }
+}
+
+// Function to verify file integrity (check if the file is altered)
+function verifyFileIntegrity(fileId) {
+  // Simulate file integrity check
+  const isFileIntact = Math.random() > 0.1; // 90% chance file is intact
+  if (isFileIntact) {
+    printOutput(`File ${fileId} integrity check: Passed.`, { type: 'log' });
+  } else {
+    printOutput(`File ${fileId} integrity check: Failed! Warning: potential tampering detected.`, { type: 'warning' });
+  }
+}
+
+// Command to open SCP-related files
+const commands = {
+  'scp': function() {
+    if (!isLoggedIn()) {
+      printOutput("You must log in first to access files.", { type: 'warning' });
+    } else {
+      const args = inputLine.value.trim().split(' ');
+      const fileId = args[1];
+      if (fileId && fileDirectories['scp'].includes(fileId)) {
+        logFileAccess(currentUser, `scp/${fileId}`, 'open');
+        openFile('scp', fileId);
+      } else {
+        printOutput("Usage: 'scp <file_id>' where <file_id> is one of the available SCP files.", { type: 'warning' });
+      }
+    }
+  },
+
+  'mtf': function() {
+    if (!isLoggedIn()) {
+      printOutput("You must log in first to access MTF files.", { type: 'warning' });
+    } else {
+      const args = inputLine.value.trim().split(' ');
+      const fileId = args[1];
+      if (fileId && fileDirectories['mtf'].includes(fileId)) {
+        logFileAccess(currentUser, `mtf/${fileId}`, 'open');
+        openFile('mtf', fileId);
+      } else {
+        printOutput("Usage: 'mtf <file_id>' where <file_id> is one of the available MTF files.", { type: 'warning' });
+      }
+    }
+  },
+
+  'redacted': function() {
+    if (!isLoggedIn()) {
+      printOutput("You must log in first to access Redacted files.", { type: 'warning' });
+    } else {
+      const args = inputLine.value.trim().split(' ');
+      const fileId = args[1];
+      if (fileId && fileDirectories['redacted'].includes(fileId)) {
+        logFileAccess(currentUser, `redacted/${fileId}`, 'open');
+        openFile('redacted', fileId);
+      } else {
+        printOutput("Usage: 'redacted <file_id>' where <file_id> is one of the available Redacted files.", { type: 'warning' });
+      }
+    }
+  },
+
+  'verify_integrity': function() {
+    if (!isLoggedIn()) {
+      printOutput("You must log in first to verify file integrity.", { type: 'warning' });
+    } else {
+      const args = inputLine.value.trim().split(' ');
+      const fileId = args[1];
+      if (fileId) {
+        verifyFileIntegrity(fileId);
+      } else {
+        printOutput("Usage: 'verify_integrity <file_id>' to check the integrity of a specific file.", { type: 'warning' });
+      }
+    }
+  },
+
+  'list': function() {
+    if (!isLoggedIn()) {
+      printOutput("You must log in first to view the file list.", { type: 'warning' });
+    } else {
+      const args = inputLine.value.trim().split(' ');
+      const directory = args[1];
+      if (directory && fileDirectories[directory]) {
+        listFiles(directory);
+      } else {
+        printOutput("Usage: 'list <directory>' where <directory> can be 'scp', 'mtf', or 'redacted'.", { type: 'warning' });
+      }
+    }
+  },
+
+  'clear': function() {
+    if (!isLoggedIn()) {
+      printOutput("You must log in first to use this command.", { type: 'warning' });
+    } else {
+      terminalOutput.innerHTML = '';
+      printOutput("Session logs cleared.", { type: 'motto' });
+      printOutput("Welcome to the O5 Council Terminal. Type 'help' for commands.", { type: 'important' });
+    }
+  }
+};
+
+// Event listener for command input
+inputLine.addEventListener('keydown', function(event) {
+  if (event.key === 'Enter') {
+    const command = inputLine.value.trim();
+    printOutput("&gt; " + command);
+    handleCommand(command);
+    inputLine.value = '';
+    inputLine.focus();
+  }
+});
+// script.js — PART 18: User Access Management & Advanced Command Structure
+
+// Simulate user data (example roles: 'User', 'Administrator', 'Guest')
+const users = {
+  'admin': { password: 'adminpassword', role: 'Administrator' },
+  'user': { password: 'userpassword', role: 'User' },
+  'guest': { password: 'guestpassword', role: 'Guest' }
+};
+
+// Initialize user session
+let currentUser = 'guest'; // Default user is 'guest'
+let isLoggedIn = false;
+
+// Function to handle user login
+function loginUser(username, password) {
+  if (users[username] && users[username].password === password) {
+    currentUser = username;
+    isLoggedIn = true;
+    printOutput(`Welcome back, ${username}. Role: ${users[username].role}.`, { type: 'important' });
+  } else {
+    printOutput("Invalid username or password. Please try again.", { type: 'error' });
+  }
+}
+
+// Function to handle user logout
+function logoutUser() {
+  if (!isLoggedIn) {
+    printOutput("No active session to log out from.", { type: 'warning' });
+  } else {
+    isLoggedIn = false;
+    printOutput(`Logged out successfully. Goodbye, ${currentUser}.`, { type: 'important' });
+    currentUser = 'guest'; // Reset to guest
+  }
+}
+
+// Function to change user roles (only accessible by admins)
+function changeUserRole(targetUser, newRole) {
+  if (users[currentUser].role !== 'Administrator') {
+    printOutput("You must be an Administrator to change user roles.", { type: 'error' });
+    return;
+  }
+  if (users[targetUser]) {
+    users[targetUser].role = newRole;
+    printOutput(`User ${targetUser}'s role has been changed to ${newRole}.`, { type: 'log' });
+  } else {
+    printOutput("User not found.", { type: 'error' });
+  }
+}
+
+// Function to lock a user's account (only accessible by admins)
+function lockUserAccount(targetUser) {
+  if (users[currentUser].role !== 'Administrator') {
+    printOutput("You must be an Administrator to lock user accounts.", { type: 'error' });
+    return;
+  }
+  if (users[targetUser]) {
+    users[targetUser].locked = true;
+    printOutput(`User ${targetUser}'s account has been locked.`, { type: 'warning' });
+  } else {
+    printOutput("User not found.", { type: 'error' });
+  }
+}
+
+// Function to unlock a user's account (only accessible by admins)
+function unlockUserAccount(targetUser) {
+  if (users[currentUser].role !== 'Administrator') {
+    printOutput("You must be an Administrator to unlock user accounts.", { type: 'error' });
+    return;
+  }
+  if (users[targetUser]) {
+    users[targetUser].locked = false;
+    printOutput(`User ${targetUser}'s account has been unlocked.`, { type: 'log' });
+  } else {
+    printOutput("User not found.", { type: 'error' });
+  }
+}
+
+// Function to change user password (accessible only by the user or admins)
+function changeUserPassword(newPassword) {
+  if (!isLoggedIn) {
+    printOutput("You must be logged in to change your password.", { type: 'error' });
+    return;
+  }
+  if (users[currentUser].role === 'Guest') {
+    printOutput("Guests are not allowed to change their password.", { type: 'warning' });
+    return;
+  }
+  users[currentUser].password = newPassword;
+  printOutput("Password changed successfully.", { type: 'log' });
+}
+
+// Function to simulate failed login attempts for lockout functionality
+let failedLoginAttempts = 0;
+
+function handleFailedLoginAttempt(username) {
+  failedLoginAttempts++;
+  if (failedLoginAttempts >= 3) {
+    users[username].locked = true;
+    printOutput(`Account ${username} has been locked due to 3 failed login attempts.`, { type: 'warning' });
+  }
+}
+
+// Commands for User Access Management
+const commands = {
+  'login': function() {
+    const args = inputLine.value.trim().split(' ');
+    const username = args[1];
+    const password = args[2];
+    if (username && password) {
+      loginUser(username, password);
+    } else {
+      printOutput("Usage: 'login <username> <password>'", { type: 'warning' });
+    }
+  },
+
+  'logout': function() {
+    if (!isLoggedIn) {
+      printOutput("You are not logged in.", { type: 'warning' });
+    } else {
+      logoutUser();
+    }
+  },
+
+  'role': function() {
+    const args = inputLine.value.trim().split(' ');
+    const targetUser = args[1];
+    const newRole = args[2];
+    if (targetUser && newRole) {
+      changeUserRole(targetUser, newRole);
+    } else {
+      printOutput("Usage: 'role <username> <new_role>'", { type: 'warning' });
+    }
+  },
+
+  'lock': function() {
+    const args = inputLine.value.trim().split(' ');
+    const targetUser = args[1];
+    if (targetUser) {
+      lockUserAccount(targetUser);
+    } else {
+      printOutput("Usage: 'lock <username>'", { type: 'warning' });
+    }
+  },
+
+  'unlock': function() {
+    const args = inputLine.value.trim().split(' ');
+    const targetUser = args[1];
+    if (targetUser) {
+      unlockUserAccount(targetUser);
+    } else {
+      printOutput("Usage: 'unlock <username>'", { type: 'warning' });
+    }
+  },
+
+  'password': function() {
+    const args = inputLine.value.trim().split(' ');
+    const newPassword = args[1];
+    if (newPassword) {
+      changeUserPassword(newPassword);
+    } else {
+      printOutput("Usage: 'password <new_password>'", { type: 'warning' });
+    }
+  },
+
+  'clear': function() {
+    if (!isLoggedIn) {
+      printOutput("You must log in first to use this command.", { type: 'warning' });
+    } else {
+      terminalOutput.innerHTML = '';
+      printOutput("Session logs cleared.", { type: 'motto' });
+      printOutput("Welcome to the O5 Council Terminal. Type 'help' for commands.", { type: 'important' });
+    }
+  }
+};
+
+// Event listener for command input
+inputLine.addEventListener('keydown', function(event) {
+  if (event.key === 'Enter') {
+    const command = inputLine.value.trim();
+    printOutput("&gt; " + command);
+    handleCommand(command);
+    inputLine.value = '';
+    inputLine.focus();
+  }
+});
+
+// script.js — PART 19: Enhanced File Access Management and Interactive SCP Dossier
+
+// Sample classified files with placeholder data
+const classifiedFiles = {
+  'SCP-001': {
+    title: 'SCP-001 - The Scarlet King',
+    description: 'The Scarlet King is a major SCP entity believed to be one of the most dangerous beings in existence. His true form is unknown, and his influence is said to be widespread throughout the multiverse.',
+    accessLevel: 'O5'
+  },
+  'SCP-████': {
+    title: 'SCP-████ - [CLASSIFIED]',
+    description: 'This file is classified at the highest level. Information regarding SCP-████ is restricted to authorized personnel only.',
+    accessLevel: 'O5'
+  },
+  'SCP-█████': {
+    title: 'SCP-█████ - [TOP SECRET]',
+    description: 'A highly dangerous SCP entity whose containment protocols remain classified. This file contains vital information for global security.',
+    accessLevel: 'O5'
+  },
+  'TF-███': {
+    title: 'Task Force ███ - Operation ████',
+    description: 'Task Force ███ specializes in combating global-scale threats. This operation was conducted to eliminate a significant SCP threat.',
+    accessLevel: 'MTF'
+  },
+  'TF-████': {
+    title: 'Task Force ████ - Operation █████',
+    description: 'A covert operation designed to infiltrate an SCP containment breach and neutralize rogue entities.',
+    accessLevel: 'MTF'
+  },
+  'Redacted-001': {
+    title: 'Redacted File 001',
+    description: 'The contents of this file are redacted, but it is believed to contain top-secret intelligence about an emerging threat to the world.',
+    accessLevel: 'O5'
+  }
+};
+
+// Function to simulate opening a file with loading process
+function simulateFileOpening(fileName, callback) {
+  printOutput("Accessing " + fileName + "...");
+  setTimeout(() => {
+    if (classifiedFiles[fileName]) {
+      const file = classifiedFiles[fileName];
+      printOutput(`[FILE LOADED]`);
+      printOutput(`Title: ${file.title}`, { type: 'important' });
+      printOutput(`Description: ${file.description}`, { type: 'log' });
+      printOutput(`Access Level Required: ${file.accessLevel}`, { type: 'log' });
+    } else {
+      printOutput("File not found.", { type: 'error' });
+    }
+    callback();
+  }, 2000);
+}
+
+// Function to open a file based on user query
+function openFile(fileName) {
+  if (classifiedFiles[fileName]) {
+    simulateFileOpening(fileName, () => {});
+  } else {
+    printOutput("Invalid file name. Use 'list' to view available files.", { type: 'error' });
+  }
+}
+
+// Function to list available files based on access level
+function listFiles() {
+  let accessibleFiles = [];
+  if (users[currentUser].role === 'Administrator') {
+    accessibleFiles = Object.keys(classifiedFiles);
+  } else if (users[currentUser].role === 'MTF') {
+    accessibleFiles = Object.keys(classifiedFiles).filter(file => classifiedFiles[file].accessLevel === 'MTF');
+  } else {
+    accessibleFiles = Object.keys(classifiedFiles).filter(file => classifiedFiles[file].accessLevel !== 'O5');
+  }
+
+  printOutput("Available Files:");
+  accessibleFiles.forEach(file => {
+    printOutput(`${file} - ${classifiedFiles[file].title}`, { type: 'log' });
   });
-</script>
+}
 
-<style>
-  /* Loading spinner styles */
-  #loading-spinner {
-    display: none;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 50px;
-    height: 50px;
-    border: 6px solid #f3f3f3;
-    border-top: 6px solid #0f0;
-    border-radius: 50%;
-    animation: spin 2s linear infinite;
+// Commands for file access
+const commands = {
+  'list': function() {
+    listFiles();
+  },
+
+  'open': function() {
+    const args = inputLine.value.trim().split(' ');
+    const fileName = args[1];
+    if (fileName) {
+      openFile(fileName);
+    } else {
+      printOutput("Usage: 'open <file_name>'", { type: 'warning' });
+    }
+  },
+
+  'terminate': function() {
+    printOutput("The operation has been terminated.");
+    setTimeout(() => {
+      printOutput("We die in the dark so you can live in the light.", { type: 'important' });
+    }, 2000);
+  },
+
+  'clear': function() {
+    printOutput("Session logs cleared.", { type: 'motto' });
+    printOutput("Welcome back, Administrator. Type 'help' for a list of commands.", { type: 'important' });
+  },
+
+  'help': function() {
+    printOutput("Available Commands:");
+    printOutput("list - List available files based on your access level.");
+    printOutput("open <file_name> - Open and view details of the specified file.");
+    printOutput("terminate - Terminate the session with a message.");
+    printOutput("clear - Clear session logs and reset.");
+    printOutput("help - Display available commands.");
+  }
+};
+
+// Event listener for command input
+inputLine.addEventListener('keydown', function(event) {
+  if (event.key === 'Enter') {
+    const command = inputLine.value.trim();
+    printOutput("&gt; " + command);
+    handleCommand(command);
+    inputLine.value = '';
+    inputLine.focus();
+  }
+});
+
+// script.js — PART 20: Advanced File Access Control & Enhanced User Interaction
+
+// Expanded SCP and Redacted file collection
+const classifiedFiles = {
+  'SCP-001': {
+    title: 'SCP-001 - The Scarlet King',
+    description: 'SCP-001, also known as The Scarlet King, is believed to be the progenitor of all entities in the multiverse. His true form is shrouded in mystery, but his destructive power is absolute. The Scarlet King aims to return to our universe and break the barrier that confines him.',
+    accessLevel: 'O5',
+    additionalNotes: 'Be aware: this file is strictly classified, and dissemination of any information regarding SCP-001 is a violation of protocol.'
+  },
+  'SCP-███': {
+    title: 'SCP-███ - [REDACTED]',
+    description: 'This file contains highly classified information about an unknown entity capable of altering reality. Details are withheld to prevent mass panic and unauthorized access.',
+    accessLevel: 'O5',
+    additionalNotes: 'Only O5 personnel have clearance for this file.'
+  },
+  'SCP-█████': {
+    title: 'SCP-█████ - [TOP SECRET]',
+    description: 'A top-secret file about SCP-█████. The entity has been contained, but research is ongoing. Any further information is classified to prevent chaos.',
+    accessLevel: 'O5',
+    additionalNotes: 'Authorization from The Administrator is required to view this file.'
+  },
+  'TF-███': {
+    title: 'Task Force ███ - Operation ████',
+    description: 'Task Force ███ specializes in counteracting reality-bending entities. This operation focused on eliminating an uncontainable SCP threat.',
+    accessLevel: 'MTF',
+    additionalNotes: 'This operation is considered highly sensitive. Only authorized MTF personnel may access this file.'
+  },
+  'TF-████': {
+    title: 'Task Force ████ - Operation █████',
+    description: 'The operation conducted by Task Force ████ was designed to infiltrate and contain an anomalous entity before it could breach global containment protocols.',
+    accessLevel: 'MTF',
+    additionalNotes: 'Highly classified operational details. Approval required from the overseeing MTF Commander.'
+  },
+  'Redacted-001': {
+    title: 'Redacted File 001',
+    description: 'This file contains information about a threat so dangerous that even The Administrator is unable to fully disclose its details.',
+    accessLevel: 'O5',
+    additionalNotes: 'Redacted for security purposes. A comprehensive investigation is ongoing.'
+  },
+  'Redacted-002': {
+    title: 'Redacted File 002',
+    description: 'This file was removed from all public records. It contains details about a potential breach in the SCP containment system.',
+    accessLevel: 'O5',
+    additionalNotes: 'File access requires approval from the O5 Council.'
+  }
+};
+
+// Enhanced File Opening Function with Detailed Error Handling
+function openFile(fileName) {
+  if (classifiedFiles[fileName]) {
+    const file = classifiedFiles[fileName];
+    if (users[currentUser].role === 'O5' || (file.accessLevel === 'MTF' && users[currentUser].role === 'MTF')) {
+      printOutput("Accessing " + fileName + "...");
+      setTimeout(() => {
+        printOutput(`[FILE LOADED]`);
+        printOutput(`Title: ${file.title}`, { type: 'important' });
+        printOutput(`Description: ${file.description}`, { type: 'log' });
+        printOutput(`Access Level Required: ${file.accessLevel}`, { type: 'log' });
+        printOutput(`Additional Notes: ${file.additionalNotes}`, { type: 'motto' });
+      }, 2000);
+    } else {
+      printOutput("Access Denied: Insufficient clearance.", { type: 'error' });
+    }
+  } else {
+    printOutput("Error: File not found. Ensure that the file name is correct.", { type: 'error' });
+  }
+}
+
+// Refined List Files Function with Dynamic Access Levels
+function listFiles() {
+  let accessibleFiles = [];
+  if (users[currentUser].role === 'Administrator') {
+    accessibleFiles = Object.keys(classifiedFiles);
+  } else if (users[currentUser].role === 'MTF') {
+    accessibleFiles = Object.keys(classifiedFiles).filter(file => classifiedFiles[file].accessLevel === 'MTF');
+  } else if (users[currentUser].role === 'O5') {
+    accessibleFiles = Object.keys(classifiedFiles).filter(file => classifiedFiles[file].accessLevel === 'O5');
   }
 
-  /* Spinner animation */
-  @keyframes spin {
-    0% { transform: translate(-50%, -50%) rotate(0deg); }
-    100% { transform: translate(-50%, -50%) rotate(360deg); }
+  printOutput("Listing accessible files for your clearance level:");
+  accessibleFiles.forEach(file => {
+    printOutput(`${file} - ${classifiedFiles[file].title}`, { type: 'log' });
+  });
+}
+
+// Terminate Function with Session End Confirmation
+function terminateSession() {
+  printOutput("Session terminated. Logging out...");
+  setTimeout(() => {
+    printOutput("We die in the dark so you can live in the light.", { type: 'important' });
+    printOutput("Logging out... Please hold.", { type: 'motto' });
+    window.location.href = "/logout"; // Simulate redirection to logout or home page
+  }, 3000);
+}
+
+// Clear Command Enhanced with New Log Messages
+function clearLogs() {
+  printOutput("Session logs cleared. Welcome back, Administrator.");
+  printOutput("Type 'help' to view available commands.", { type: 'motto' });
+}
+
+// Enhanced Commands for User Interaction
+const commands = {
+  'list': function() {
+    listFiles();
+  },
+
+  'open': function() {
+    const args = inputLine.value.trim().split(' ');
+    const fileName = args[1];
+    if (fileName) {
+      openFile(fileName);
+    } else {
+      printOutput("Usage: 'open <file_name>'", { type: 'warning' });
+    }
+  },
+
+  'terminate': function() {
+    terminateSession();
+  },
+
+  'clear': function() {
+    clearLogs();
+  },
+
+  'help': function() {
+    printOutput("Available Commands:");
+    printOutput("list - List accessible files based on your clearance.");
+    printOutput("open <file_name> - Open and view details of a specific file.");
+    printOutput("terminate - End the session with a session log off.");
+    printOutput("clear - Clear the session logs and reset the view.");
+    printOutput("help - Display this help message.");
+  }
+};
+
+// Handling the command input
+inputLine.addEventListener('keydown', function(event) {
+  if (event.key === 'Enter') {
+    const command = inputLine.value.trim();
+    printOutput("&gt; " + command);
+    handleCommand(command);
+    inputLine.value = '';
+    inputLine.focus();
+  }
+});
+// script.js — PART 21: Advanced Error Handling & User Display Enhancements
+
+// Enhanced SCP File Loading Simulation with Error Handling
+function simulateFileLoad(fileName, callback) {
+  printOutput(`Simulating load for ${fileName}...`);
+  setTimeout(() => {
+    if (classifiedFiles[fileName]) {
+      printOutput(`[LOADING FILE] ${fileName}`);
+      callback();
+    } else {
+      printOutput(`Error: File ${fileName} not found. Please check the file name and try again.`, { type: 'error' });
+    }
+  }, 1500);
+}
+
+// Function to Format the Display of SCP Files
+function formatFileDisplay(file) {
+  printOutput(`Title: ${file.title}`, { type: 'important' });
+  printOutput(`Description: ${file.description}`, { type: 'log' });
+  printOutput(`Access Level: ${file.accessLevel}`, { type: 'log' });
+  printOutput(`Additional Notes: ${file.additionalNotes}`, { type: 'important' });
+}
+
+// Refined 'open' Command with Error Check and File Load Simulation
+const openFile = (args) => {
+  const fileName = args[1];
+  if (fileName) {
+    simulateFileLoad(fileName, () => {
+      const file = classifiedFiles[fileName];
+      if (file) {
+        formatFileDisplay(file);
+      } else {
+        printOutput(`Error: File ${fileName} not found.`, { type: 'error' });
+      }
+    });
+  } else {
+    printOutput("Usage: 'open <file_name>'", { type: 'warning' });
+  }
+};
+
+// Enhanced File Access Command with More Detailed Responses
+const listFiles = () => {
+  const userRole = users[currentUser].role;
+  printOutput(`Listing accessible files for your role: ${userRole}`);
+
+  let accessibleFiles = [];
+  if (userRole === 'Administrator') {
+    accessibleFiles = Object.keys(classifiedFiles);
+  } else if (userRole === 'O5') {
+    accessibleFiles = Object.keys(classifiedFiles).filter(file => classifiedFiles[file].accessLevel === 'O5');
+  } else if (userRole === 'MTF') {
+    accessibleFiles = Object.keys(classifiedFiles).filter(file => classifiedFiles[file].accessLevel === 'MTF');
+  } else {
+    printOutput("You do not have permission to access files.", { type: 'error' });
+    return;
   }
 
-  /* Confirmation prompt styles */
-  .confirmation-prompt {
-    font-size: 1.1em;
-    color: #ffcc00;
+  if (accessibleFiles.length === 0) {
+    printOutput("No files available for your current clearance.", { type: 'error' });
+  } else {
+    accessibleFiles.forEach(file => {
+      printOutput(`${file} - ${classifiedFiles[file].title}`, { type: 'log' });
+    });
   }
-</style>
+};
 
-<!-- END OF PART 9 -->
+// Modified Commands with Better Error Handling and User Feedback
+const commands = {
+  'list': function() {
+    listFiles();
+  },
+
+  'open': function() {
+    const args = inputLine.value.trim().split(' ');
+    openFile(args);
+  },
+
+  'terminate': function() {
+    terminateSession();
+  },
+
+  'clear': function() {
+    clearLogs();
+  },
+
+  'help': function() {
+    printOutput("Available Commands:");
+    printOutput("list - List accessible files based on your clearance.");
+    printOutput("open <file_name> - Open and view details of a specific file.");
+    printOutput("terminate - End the session with a session log off.");
+    printOutput("clear - Clear the session logs and reset the view.");
+    printOutput("help - Display this help message.");
+  }
+};
+
+// Function to display formatted messages with CSS class
+function printOutput(message, options = { type: 'default' }) {
+  const outputArea = document.getElementById('outputArea');
+  const newMessage = document.createElement('p');
+  newMessage.textContent = message;
+
+  switch (options.type) {
+    case 'important':
+      newMessage.classList.add('important-message');
+      break;
+    case 'log':
+      newMessage.classList.add('log-message');
+      break;
+    case 'warning':
+      newMessage.classList.add('warning-message');
+      break;
+    case 'error':
+      newMessage.classList.add('error-message');
+      break;
+    case 'motto':
+      newMessage.classList.add('motto-message');
+      break;
+    default:
+      newMessage.classList.add('default-message');
+      break;
+  }
+
+  outputArea.appendChild(newMessage);
+}
+
+// Enhanced Termination with Logout Confirmation
+function terminateSession() {
+  printOutput("Session terminated. Logging out...");
+  setTimeout(() => {
+    printOutput("We die in the dark so you can live in the light.", { type: 'important' });
+    printOutput("Logging out... Please hold.", { type: 'motto' });
+    window.location.href = "/logout"; // Redirecting to simulate logout
+  }, 3000);
+}
+
+// Event listener for command input
+inputLine.addEventListener('keydown', function(event) {
+  if (event.key === 'Enter') {
+    const command = inputLine.value.trim();
+    printOutput("&gt; " + command);
+    handleCommand(command);
+    inputLine.value = '';
+    inputLine.focus();
+  }
+});
+
+// Handle the commands dynamically based on user input
+function handleCommand(command) {
+  if (commands[command]) {
+    commands[command]();
+  } else {
+    printOutput("Unknown command: " + command, { type: 'error' });
+    printOutput("Type 'help' for a list of available commands.", { type: 'warning' });
+  }
+}
+// script.js — PART 22: Task Force Operations, SCP Operations, and Enhanced File Management
+
+// Sample Task Force Operations with Placeholder Data
+const taskForceOperations = {
+  'TF-███': {
+    title: 'Operation ████ - [SECRET]',
+    description: 'This operation involves retrieving an anomalous object from Site-██. The task force was deployed to secure the object.',
+    accessLevel: 'O5',
+    additionalNotes: 'Report classified. Authorization required.'
+  },
+  'TF-████': {
+    title: 'Operation ██████ - [RESTRICTED]',
+    description: 'A containment breach occurred at Site-██. Task force deployed to recover classified assets and prevent civilian exposure.',
+    accessLevel: 'MTF',
+    additionalNotes: 'Specialized MTF personnel were dispatched.'
+  },
+  'TF-█████': {
+    title: 'Operation ███████ - [CLASSIFIED]',
+    description: 'A multi-site breach involving SCP-███. This was a multi-agency operation involving high-level coordination between multiple MTF teams.',
+    accessLevel: 'Administrator',
+    additionalNotes: 'Top secret, clearance required for detailed reports.'
+  }
+};
+
+// Simulate Task Force File Load with Access Control
+function simulateTaskForceLoad(fileName, callback) {
+  printOutput(`Simulating load for Task Force operation ${fileName}...`);
+  setTimeout(() => {
+    if (taskForceOperations[fileName]) {
+      printOutput(`[LOADING TASK FORCE OPERATION] ${fileName}`);
+      callback();
+    } else {
+      printOutput(`Error: Task Force operation ${fileName} not found. Please check the file name and try again.`, { type: 'error' });
+    }
+  }, 1500);
+}
+
+// Refined 'open' Command for Task Force Operations
+const openTaskForceFile = (args) => {
+  const fileName = args[1];
+  if (fileName) {
+    simulateTaskForceLoad(fileName, () => {
+      const file = taskForceOperations[fileName];
+      if (file) {
+        formatFileDisplay(file);
+      } else {
+        printOutput(`Error: Task Force operation ${fileName} not found.`, { type: 'error' });
+      }
+    });
+  } else {
+    printOutput("Usage: 'open <taskforce_file_name>'", { type: 'warning' });
+  }
+};
+
+// Simulated SCP File with Detailed Access Control
+const simulatedSCPFiles = {
+  'SCP-█████': {
+    title: 'SCP-█████ - The Scarlet King [CLASSIFIED]',
+    description: 'SCP-█████ is a highly dangerous entity responsible for multiple global incidents. The file contains a complete containment and interaction protocol.',
+    accessLevel: 'O5',
+    additionalNotes: 'Restricted information. Authorized personnel only.',
+  },
+  'SCP-██████': {
+    title: 'SCP-██████ - [RESTRICTED]',
+    description: 'This SCP involves a powerful artifact with reality-altering properties. Full documentation is under strict access control.',
+    accessLevel: 'Administrator',
+    additionalNotes: 'Requires highest clearance for review.',
+  },
+  'SCP-███████': {
+    title: 'SCP-███████ - [TOP SECRET]',
+    description: 'This SCP file contains data about a metaphysical anomaly located in Site-███. It is considered the highest classification within the SCP Foundation.',
+    accessLevel: 'Administrator',
+    additionalNotes: 'Very sensitive and classified. No unauthorized access.'
+  }
+};
+
+// Simulate SCP File Load with Detailed Access and Feedback
+function simulateSCPFileLoad(fileName, callback) {
+  printOutput(`Simulating load for SCP file ${fileName}...`);
+  setTimeout(() => {
+    if (simulatedSCPFiles[fileName]) {
+      printOutput(`[LOADING SCP FILE] ${fileName}`);
+      callback();
+    } else {
+      printOutput(`Error: SCP file ${fileName} not found. Please check the file name and try again.`, { type: 'error' });
+    }
+  }, 1500);
+}
+
+// Enhanced SCP File Opening with Access Control and Detailed Information
+const openSCPFile = (args) => {
+  const fileName = args[1];
+  if (fileName) {
+    simulateSCPFileLoad(fileName, () => {
+      const file = simulatedSCPFiles[fileName];
+      if (file) {
+        formatFileDisplay(file);
+      } else {
+        printOutput(`Error: SCP file ${fileName} not found.`, { type: 'error' });
+      }
+    });
+  } else {
+    printOutput("Usage: 'open <scp_file_name>'", { type: 'warning' });
+  }
+};
+
+// Improved Help Command to Include Task Force and SCP Files
+const updatedHelp = () => {
+  printOutput("Available Commands:");
+  printOutput("list - List available SCP, Task Force, and Redacted files based on your clearance.");
+  printOutput("open <file_name> - Open and view details of a specific SCP, Task Force, or Redacted file.");
+  printOutput("terminate - End the session with a session log off.");
+  printOutput("clear - Clear the session logs and reset the view.");
+  printOutput("help - Display this help message.");
+  printOutput("taskforce - View details of Task Force operations.");
+  printOutput("scp - Access SCP-related documents.");
+  printOutput("redacted - Access Redacted/Secret files.");
+};
+
+// Redefine Command Structure to Handle Task Force and SCP
+const commands = {
+  'list': function() {
+    listFiles();
+  },
+
+  'open': function() {
+    const args = inputLine.value.trim().split(' ');
+    openSCPFile(args);
+    openTaskForceFile(args);
+  },
+
+  'terminate': function() {
+    terminateSession();
+  },
+
+  'clear': function() {
+    clearLogs();
+  },
+
+  'help': function() {
+    updatedHelp();
+  },
+
+  'taskforce': function() {
+    printOutput("Accessing Task Force operations...");
+    Object.keys(taskForceOperations).forEach(file => {
+      printOutput(`${file} - ${taskForceOperations[file].title}`, { type: 'log' });
+    });
+  },
+
+  'scp': function() {
+    printOutput("Accessing SCP files...");
+    Object.keys(simulatedSCPFiles).forEach(file => {
+      printOutput(`${file} - ${simulatedSCPFiles[file].title}`, { type: 'log' });
+    });
+  },
+
+  'redacted': function() {
+    printOutput("Accessing Redacted/Secret Files...");
+    printOutput("File 001 - [REDACTED]");
+    printOutput("File 002 - [CONFIDENTIAL]");
+    printOutput("File 003 - [CLASSIFIED]");
+  }
+};
+
+// Event listener for command input
+inputLine.addEventListener('keydown', function(event) {
+  if (event.key === 'Enter') {
+    const command = inputLine.value.trim();
+    printOutput("&gt; " + command);
+    handleCommand(command);
+    inputLine.value = '';
+    inputLine.focus();
+  }
+});
+
+// Handle the commands dynamically based on user input
+function handleCommand(command) {
+  if (commands[command]) {
+    commands[command]();
+  } else {
+    printOutput("Unknown command: " + command, { type: 'error' });
+    printOutput("Type 'help' for a list of available commands.", { type: 'warning' });
+  }
+}
+  <!-- End of script.js -->
 </body>
 </html>
