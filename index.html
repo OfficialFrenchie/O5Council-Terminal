@@ -6,14 +6,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-
     body {
       background-color: #000;
       color: #0f0;
       font-family: 'Courier New', Courier, monospace;
       overflow: hidden;
     }
-
     header {
       display: flex;
       align-items: center;
@@ -22,12 +20,10 @@
       padding: 10px 20px;
       border-bottom: 2px solid #0f0;
     }
-
     header img {
       height: 60px;
       filter: grayscale(100%) brightness(0.8);
     }
-
     .glitch-text {
       font-size: 1.2em;
       position: relative;
@@ -35,12 +31,10 @@
       text-shadow: 1px 0 red, -1px 0 blue;
       animation: glitch 1s infinite;
     }
-
     @keyframes glitch {
       0%, 100% { text-shadow: 2px 0 red, -2px 0 blue; }
       50% { text-shadow: -2px 0 red, 2px 0 blue; }
     }
-
     .terminal {
       height: calc(100vh - 90px);
       display: flex;
@@ -49,7 +43,6 @@
       padding: 20px;
       overflow: hidden;
     }
-
     .boot-screen, .main-terminal {
       display: none;
       flex-direction: column;
@@ -61,21 +54,17 @@
       text-align: left;
       overflow: hidden;
     }
-
     .boot-line, .main-line {
       white-space: pre-wrap;
       margin: 2px 0;
     }
-
     .typed-line {
       border-right: 2px solid #0f0;
       animation: blink 1s steps(1) infinite;
     }
-
     @keyframes blink {
       50% { border-color: transparent; }
     }
-
     .output-wrapper {
       display: flex;
       flex-direction: column;
@@ -85,11 +74,9 @@
       overflow: hidden;
       padding: 0 20px;
     }
-
     .input-line::before {
       content: "> ";
     }
-
     .hidden {
       display: none !important;
     }
@@ -103,7 +90,6 @@
 
   <div class="terminal">
     <div class="boot-screen" id="boot-screen"></div>
-
     <div class="main-terminal hidden" id="main-terminal">
       <div class="output-wrapper" id="terminal-output">
         <div class="main-line input-line hidden" id="input-line"></div>
@@ -129,9 +115,7 @@
       "Enter O5 Clearance Credentials: ███-███-████-█"
     ];
 
-    let bootIndex = 0;
-
-    function typeLine(text, index, callback) {
+    function typeLine(text, callback) {
       let line = document.createElement("div");
       line.className = "boot-line";
       bootScreen.appendChild(line);
@@ -149,18 +133,16 @@
 
     function runBootSequence() {
       bootScreen.style.display = "flex";
+      let index = 0;
       function nextLine() {
-        if (bootIndex < bootSequence.length) {
-          typeLine(bootSequence[bootIndex], bootIndex, () => {
-            bootIndex++;
-            nextLine();
-          });
+        if (index < bootSequence.length) {
+          typeLine(bootSequence[index++], nextLine);
         } else {
           const authLine = document.createElement("div");
           authLine.className = "boot-line";
           authLine.textContent = "ACCESS AUTHORIZED [O5-CNCL]";
           bootScreen.appendChild(authLine);
-          setTimeout(() => transitionToMainTerminal(), 1500);
+          setTimeout(transitionToMainTerminal, 1500);
         }
       }
       nextLine();
@@ -191,20 +173,36 @@
     }
 
     function runCommandInterface() {
+      const files = {
+        'scp-173': [
+          '[FILE: SCP-173]',
+          'Object Class: Euclid',
+          'Description: Animate statue that moves when not observed.',
+          'Special Containment Procedures: Kept in locked container. Line-of-sight by three personnel required during maintenance.'
+        ],
+        'taskforce-epsilon-11': [
+          '[FILE: Mobile Task Force Epsilon-11]',
+          'Codename: Nine-Tailed Fox',
+          'Role: Specialized in internal Foundation security breaches and containment failure response.',
+          'Recent Deployment: Incident SCP-106 breach, Site-19.'
+        ],
+        'redacted-logs': [
+          '[REDACTED ARCHIVE - LEVEL 5]',
+          'Unauthorized access to these documents will be logged and reported.',
+          'Access requires retina scan and memetic key.',
+          '[REDACTED ██████████████████████████████████████████████████████████████████]' 
+        ]
+      };
+
       const commandMap = {
         help: [
           'Available Commands:',
-          ' - help         → List all available commands',
-          ' - list         → Display classified documents',
-          ' - access [id]  → Access a specific file (e.g., access O5-█)',
-          ' - logout       → Exit the terminal'
+          ' - help                 → List all available commands',
+          ' - list                 → Display list of available files',
+          ' - open [filename]      → View a classified file (e.g., open scp-173)',
+          ' - logout               → Exit the terminal'
         ],
-        list: [
-          'Secure Files:',
-          ' - O5-█.scpd',
-          ' - SiteEx-47-Report.txt',
-          ' - Event-BlackoutLog.docx'
-        ],
+        list: Object.keys(files).map(f => ` - ${f}`),
         logout: ['Logging out...', 'Session terminated.']
       };
 
@@ -223,14 +221,18 @@
             inputLine.classList.add('hidden');
             addLine(`> ${inputBuffer}`);
 
-            const cmd = inputBuffer.trim().split(' ')[0].toLowerCase();
-            const param = inputBuffer.trim().split(' ')[1];
+            const [cmd, ...args] = inputBuffer.trim().split(' ');
+            const fullCmd = cmd.toLowerCase();
 
-            if (commandMap[cmd]) {
-              commandMap[cmd].forEach((line, i) => addLine(line, i * 100));
-            } else if (cmd === 'access' && param) {
-              addLine(`Accessing file: ${param}...`);
-              addLine(`[REDACTED CONTENT - LEVEL 5 REQUIRED]`, 500);
+            if (commandMap[fullCmd]) {
+              commandMap[fullCmd].forEach((line, i) => addLine(line, i * 100));
+            } else if (fullCmd === 'open') {
+              const target = args.join('-').toLowerCase();
+              if (files[target]) {
+                files[target].forEach((line, i) => addLine(line, i * 100));
+              } else {
+                addLine(`File "${target}" not found.`);
+              }
             } else {
               addLine('Unknown command. Type "help" for assistance.');
             }
