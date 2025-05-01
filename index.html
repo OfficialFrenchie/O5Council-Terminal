@@ -1,285 +1,344 @@
+<!-- PART 1: HTML HEAD & STYLES -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SCP O5 Council Terminal - Login</title>
-    <style>
-        /* Reset */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Courier New', Courier, monospace;
-            background-color: black;
-            color: #0f0;
-            height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-        }
-
-        /* Login Screen */
-        .login-container {
-            text-align: center;
-            padding: 20px;
-            background-color: #222;
-            border: 2px solid #0f0;
-            border-radius: 10px;
-        }
-
-        .login-header {
-            font-size: 1.8em;
-            font-weight: bold;
-        }
-
-        .input-field {
-            background-color: black;
-            color: #0f0;
-            border: 1px solid #0f0;
-            font-size: 1.2em;
-            padding: 10px;
-            width: 250px;
-            margin-top: 20px;
-            border-radius: 5px;
-            outline: none;
-        }
-
-        .input-field:focus {
-            border-color: yellow;
-        }
-
-        .terminal-container {
-            display: none;
-            width: 100%;
-            height: 100vh;
-            padding: 20px;
-            overflow: hidden;
-        }
-
-        .terminal-output {
-            width: 100%;
-            height: 100%;
-            overflow-y: scroll;
-            padding-right: 15px;
-            font-size: 1.2em;
-        }
-
-        .command-line {
-            display: flex;
-            width: 100%;
-        }
-
-        .input-line {
-            width: 100%;
-            border: none;
-            outline: none;
-            color: #0f0;
-            background: transparent;
-            font-size: 1.1em;
-            padding: 5px;
-        }
-
-        .input-line:focus {
-            border: none;
-        }
-
-        .output-line {
-            margin: 5px 0;
-            white-space: pre-wrap;
-        }
-
-        .help-text {
-            font-size: 1.1em;
-            margin-bottom: 20px;
-        }
-
-        .redacted {
-            color: red;
-            font-style: italic;
-        }
-
-        .command-description {
-            color: #0f0;
-        }
-
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background-color: #0f0;
-            border-radius: 10px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: #111;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SCP Foundation - Site Excalibur</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Courier New', Courier, monospace;
+      background: black;
+      color: #0f0;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+    }
+    header {
+      display: flex;
+      align-items: center;
+      background-color: #111;
+      padding: 10px 20px;
+      border-bottom: 2px solid #0f0;
+    }
+    header img {
+      height: 50px;
+      margin-right: 20px;
+    }
+    header h1 {
+      font-size: 1.5em;
+      animation: glitch 1s infinite;
+    }
+    @keyframes glitch {
+      0% { text-shadow: 2px 2px red; }
+      25% { text-shadow: -2px -2px lime; }
+      50% { text-shadow: 2px -2px blue; }
+      75% { text-shadow: -2px 2px yellow; }
+      100% { text-shadow: 2px 2px red; }
+    }
+    .login-container, .terminal-container {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+    }
+    .input-field {
+      background-color: black;
+      color: #0f0;
+      border: 1px solid #0f0;
+      font-size: 1.2em;
+      padding: 10px;
+      width: 300px;
+      margin-top: 20px;
+      border-radius: 5px;
+      outline: none;
+      text-align: center;
+    }
+    .terminal {
+      width: 100%;
+      height: 100%;
+      padding: 10px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+    .terminal-output {
+      flex: 1;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+    }
+    .output-line {
+      white-space: pre-wrap;
+      margin-bottom: 5px;
+    }
+    .command-line {
+      display: flex;
+    }
+    .input-line {
+      flex: 1;
+      background: transparent;
+      border: none;
+      color: #0f0;
+      font-size: 1em;
+      outline: none;
+    }
+  </style>
 </head>
 <body>
-    <!-- Login Interface -->
-    <div class="login-container" id="login-container">
-        <div class="login-header">SCP Foundation Terminal Login</div>
-        <input type="password" id="password-field" class="input-field" placeholder="Enter password" autocomplete="off" autofocus />
+  <header>
+    <img src="https://th.bing.com/th/id/OIP.JPWG2Dz6CCmpyTMAuK9EkAAAAA?rs=1&pid=ImgDetMain" alt="SCP Logo">
+    <h1>SCP Foundation - Site Excalibur : O5 Council Terminal</h1>
+  </header>
+
+  <div class="login-container" id="login-container">
+    <div id="auth-text">Authorizing connection to O5-Council Terminal...</div>
+    <input type="password" id="password-field" class="input-field" placeholder="Enter password" disabled>
+  </div>
+
+  <div class="terminal-container" id="terminal-container" style="display: none;">
+    <div class="terminal">
+      <div class="terminal-output" id="terminal-output"></div>
+      <div class="command-line">
+        <span style="color: #0f0;">&gt;</span>
+        <input type="text" id="input-line" class="input-line" autocomplete="off">
+      </div>
     </div>
+  </div>
+<!-- END OF PART 1 -->
+<!-- PART 2: LOGIN SCRIPT -->
+<script>
+  const authText = document.getElementById('auth-text');
+  const passwordField = document.getElementById('password-field');
+  const loginContainer = document.getElementById('login-container');
+  const terminalContainer = document.getElementById('terminal-container');
+  const terminalOutput = document.getElementById('terminal-output');
+  const inputLine = document.getElementById('input-line');
 
-    <!-- Terminal Interface -->
-    <div class="terminal-container" id="terminal-container">
-        <div class="terminal-output" id="terminal-output"></div>
-        <div class="command-line">
-            <input type="text" id="input-line" class="input-line" autocomplete="off" autofocus />
-        </div>
-    </div>
+  const bootLines = [
+    "[ACCESS LEVEL: O5-Council Only]",
+    "Establishing encrypted connection to SCPNET...",
+    "Terminal handshake with Site-EX successful.",
+    "Routing clearance through O5 Command Core...",
+    "Verifying retinal and DNA signatures...",
+    "Authentication chain validated.",
+    "Authorizing session...",
+    "Access Granted to Site Excalibur Mainframe"
+  ];
 
-    <script>
-        // Elements
-        const loginContainer = document.getElementById("login-container");
-        const terminalContainer = document.getElementById("terminal-container");
-        const passwordField = document.getElementById("password-field");
-        const inputLine = document.getElementById("input-line");
-        const terminalOutput = document.getElementById("terminal-output");
+  let loginIndex = 0;
 
-        const correctPassword = "O5Council";  // Correct password for login (you can change it)
-        const MAX_LINES = 15;  // Max visible lines
+  function typeBootLines() {
+    if (loginIndex < bootLines.length) {
+      authText.textContent = bootLines[loginIndex];
+      loginIndex++;
+      setTimeout(typeBootLines, 1300);
+    } else {
+      authText.textContent = "Enter Password: ********";
+      setTimeout(() => {
+        typePassword("********", 0);
+      }, 800);
+    }
+  }
 
-        // Login and Terminal Switch
-        function startLogin() {
-            let typedPassword = "";
-            const password = correctPassword;
+  function typePassword(pass, index) {
+    if (index < pass.length) {
+      passwordField.value += pass[index];
+      setTimeout(() => typePassword(pass, index + 1), 180);
+    } else {
+      setTimeout(() => {
+        loginContainer.style.display = 'none';
+        terminalContainer.style.display = 'flex';
+        welcomeMessage();
+      }, 1000);
+    }
+  }
 
-            function typePassword() {
-                if (typedPassword.length < password.length) {
-                    typedPassword += password[typedPassword.length];
-                    passwordField.value = typedPassword;
-                    setTimeout(typePassword, 200);
-                } else {
-                    setTimeout(showTerminal, 500);
-                }
-            }
+  function welcomeMessage() {
+    printOutput("Welcome, O5-Council Member.");
+    printOutput("Access Level: ████████");
+    printOutput("Site: Excalibur (Deep Terminal Node: #019-Alpha)");
+    printOutput("Type 'help' to view available commands.");
+    inputLine.focus();
+  }
 
-            typePassword();
-        }
+  function printOutput(text) {
+    const line = document.createElement('div');
+    line.className = 'output-line';
+    line.textContent = text;
+    terminalOutput.appendChild(line);
+    terminalOutput.scrollTop = terminalOutput.scrollHeight;
+  }
 
-        // Show Terminal after Successful Login
-        function showTerminal() {
-            loginContainer.style.display = "none";
-            terminalContainer.style.display = "block";
-            addLine("Welcome to the SCP Foundation Terminal - Site Excalibur", 500);
-            addLine("Type \"help\" for available commands.", 1000);
-            inputLine.focus();
-        }
+  window.onload = () => {
+    typeBootLines();
+  };
+</script>
+<!-- END OF PART 2 -->
+<!-- PART 3: COMMAND HANDLING & TERMINAL FILES -->
+<script>
+  const commands = {
+    'help': function() {
+      printOutput("Available commands:");
+      printOutput("help - Display this message.");
+      printOutput("list - List available files.");
+      printOutput("scp - Access SCP-related documents.");
+      printOutput("taskforce - View Task Force operations.");
+      printOutput("redacted - Access Redacted/Secret files.");
+      printOutput("exit - Exit the terminal.");
+    },
+    'list': function() {
+      printOutput("Listing available files...");
+      printOutput("SCP Directory - /scp");
+      printOutput("Task Force Directory - /taskforce");
+      printOutput("Redacted Files - /redacted");
+      printOutput("Type 'scp', 'taskforce', or 'redacted' followed by file number for access.");
+    },
+    'scp': function() {
+      printOutput("Accessing SCP files...");
+      printOutput("SCP-███ - [REDACTED]");
+      printOutput("SCP-████ - [CONFIDENTIAL]");
+      printOutput("SCP-█████ - [CLASSIFIED]");
+    },
+    'taskforce': function() {
+      printOutput("Accessing Task Force operation logs...");
+      printOutput("TF-███ - Operation ████ - [SECRET]");
+      printOutput("TF-████ - Operation ████ - [RESTRICTED]");
+      printOutput("TF-█████ - Operation █████ - [CLASSIFIED]");
+    },
+    'redacted': function() {
+      printOutput("Accessing Redacted/Secret Files...");
+      printOutput("File 001 - [REDACTED]");
+      printOutput("File 002 - [CONFIDENTIAL]");
+      printOutput("File 003 - [CLASSIFIED]");
+    },
+    'exit': function() {
+      printOutput("Exiting terminal...");
+      setTimeout(() => {
+        window.location.reload();
+      }, 1000);
+    }
+  };
 
-        // Command Functions
-        const commandFunctions = {
-            help: function() {
-                return [
-                    "Available Commands:",
-                    " - help                 → List all available commands",
-                    " - list                 → Display list of available files",
-                    " - open [filename]      → View a classified file (e.g., open scp-173)",
-                    " - logout               → Exit the terminal"
-                ];
-            },
-            list: function() {
-                return [
-                    "scp-173 - A statue that moves when unobserved.",
-                    "taskforce-epsilon-11 - Nine-Tailed Fox mobile task force.",
-                    "redacted-logs - Restricted access logs."
-                ];
-            },
-            open: function(args) {
-                const fileName = args[0].toLowerCase();
-                if (files[fileName]) {
-                    return files[fileName];
-                } else {
-                    return ["Error: File not found. Try \"list\" for available files."];
-                }
-            },
-            logout: function() {
-                return ["Logging out...", "Session terminated."];
-            }
-        };
+  function handleCommand(command) {
+    if (commands[command]) {
+      commands[command]();
+    } else {
+      printOutput("Unknown command: " + command);
+      printOutput("Type 'help' for a list of available commands.");
+    }
+  }
 
-        // Files in SCP Terminal
-        const files = {
-            "scp-173": [
-                "[FILE: SCP-173]",
-                "Object Class: Euclid",
-                "Description: Animate statue that moves when not observed.",
-                "Special Containment Procedures: Kept in locked container. Line-of-sight by three personnel required during maintenance."
-            ],
-            "taskforce-epsilon-11": [
-                "[FILE: Mobile Task Force Epsilon-11]",
-                "Codename: Nine-Tailed Fox",
-                "Role: Specialized in internal Foundation security breaches and containment failure response.",
-                "Recent Deployment: Incident SCP-106 breach, Site-19."
-            ],
-            "redacted-logs": [
-                "[REDACTED ARCHIVE - LEVEL 5]",
-                "Unauthorized access to these documents will be logged and reported.",
-                "[REDACTED ██████████████████████████████████████████████████████████████████]"
-            ]
-        };
+  inputLine.addEventListener('keydown', function(event) {
+    if (event.key === 'Enter') {
+      const command = inputLine.value.trim();
+      printOutput("&gt; " + command);
+      handleCommand(command);
+      inputLine.value = '';
+      inputLine.focus();
+    }
+  });
+</script>
+<!-- END OF PART 3 -->
+<!-- PART 4: TERMINAL ENHANCEMENTS & DATA SIMULATIONS -->
+<script>
+  // Simulate file access with a loading process
+  function simulateFileAccess(fileName, callback) {
+    printOutput("Accessing " + fileName + "...");
+    setTimeout(() => {
+      printOutput(fileName + " - [FILE LOADED]");
+      callback();
+    }, 2000);
+  }
 
-        // Helper Functions
-        function addLine(text, delay = 0, isError = false) {
-            setTimeout(() => {
-                const line = document.createElement("div");
-                line.className = `output-line ${isError ? 'error-line' : ''}`;
-                line.textContent = text;
-                terminalOutput.appendChild(line);
-                maintainBuffer();
-            }, delay);
-        }
+  // Modify the commands to simulate a loading process for each file type
+  const commands = {
+    'help': function() {
+      printOutput("Available commands:");
+      printOutput("help - Display this message.");
+      printOutput("list - List available files.");
+      printOutput("scp - Access SCP-related documents.");
+      printOutput("taskforce - View Task Force operations.");
+      printOutput("redacted - Access Redacted/Secret files.");
+      printOutput("exit - Exit the terminal.");
+    },
+    'list': function() {
+      printOutput("Listing available files...");
+      printOutput("SCP Directory - /scp");
+      printOutput("Task Force Directory - /taskforce");
+      printOutput("Redacted Files - /redacted");
+      printOutput("Type 'scp', 'taskforce', or 'redacted' followed by file number for access.");
+    },
+    'scp': function() {
+      simulateFileAccess("SCP-███", () => {
+        printOutput("SCP-███ - [REDACTED]");
+      });
+      simulateFileAccess("SCP-████", () => {
+        printOutput("SCP-████ - [CONFIDENTIAL]");
+      });
+      simulateFileAccess("SCP-█████", () => {
+        printOutput("SCP-█████ - [CLASSIFIED]");
+      });
+    },
+    'taskforce': function() {
+      simulateFileAccess("TF-███ - Operation ████", () => {
+        printOutput("TF-███ - Operation ████ - [SECRET]");
+      });
+      simulateFileAccess("TF-████ - Operation ████", () => {
+        printOutput("TF-████ - Operation ████ - [RESTRICTED]");
+      });
+      simulateFileAccess("TF-█████ - Operation █████", () => {
+        printOutput("TF-█████ - Operation █████ - [CLASSIFIED]");
+      });
+    },
+    'redacted': function() {
+      simulateFileAccess("File 001", () => {
+        printOutput("File 001 - [REDACTED]");
+      });
+      simulateFileAccess("File 002", () => {
+        printOutput("File 002 - [CONFIDENTIAL]");
+      });
+      simulateFileAccess("File 003", () => {
+        printOutput("File 003 - [CLASSIFIED]");
+      });
+    },
+    'exit': function() {
+      printOutput("Exiting terminal...");
+      setTimeout(() => {
+        window.location.reload();
+      }, 1000);
+    }
+  };
 
-        function maintainBuffer() {
-            const lines = terminalOutput.querySelectorAll(".output-line");
-            if (lines.length > MAX_LINES) {
-                lines[0].remove();
-            }
-        }
+  // Modify the handleCommand function to simulate file loading before executing the command
+  function handleCommand(command) {
+    if (commands[command]) {
+      commands[command]();
+    } else {
+      printOutput("Unknown command: " + command);
+      printOutput("Type 'help' for a list of available commands.");
+    }
+  }
 
-        function processCommand(commandString) {
-            const [command, ...args] = commandString.trim().split(" ");
-            const normalizedCommand = command.toLowerCase();
+  // Event listener for command input
+  inputLine.addEventListener('keydown', function(event) {
+    if (event.key === 'Enter') {
+      const command = inputLine.value.trim();
+      printOutput("&gt; " + command);
+      handleCommand(command);
+      inputLine.value = '';
+      inputLine.focus();
+    }
+  });
+</script>
+<!-- END OF PART 4 -->
 
-            if (commandFunctions[normalizedCommand]) {
-                const result = commandFunctions[normalizedCommand](args);
-                result.forEach((line, i) => addLine(line, i * 300));
-            } else {
-                addLine("Error: Unknown command. Type \"help\" for assistance.", 300, true);
-            }
-        }
-
-        // Terminal Input Handling
-        function handleInput() {
-            const input = inputLine.value.trim();
-            if (input === "") return;
-            addLine(`> ${input}`, 300);
-            processCommand(input);
-            inputLine.value = "";  // Clear input field
-        }
-
-        // Initialize Terminal
-        function initializeTerminal() {
-            inputLine.addEventListener("keydown", function(event) {
-                if (event.key === "Enter") {
-                    handleInput();
-                }
-            });
-        }
-
-        // Start Terminal Bootup
-        window.onload = () => {
-            startLogin();
-            initializeTerminal();
-        };
-    </script>
 </body>
 </html>
