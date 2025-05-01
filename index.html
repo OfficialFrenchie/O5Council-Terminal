@@ -1,4 +1,4 @@
-<!-- PART 1: HTML HEAD & STYLES -->
+<!-- PART 1: HTML HEAD & INITIAL SETUP -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -94,7 +94,7 @@
 </head>
 <body>
   <header>
-    <img src="https://th.bing.com/th/id/OIP.JPWG2Dz6CCmpyTMAuK9EkAAAAA?rs=1&pid=ImgDetMain" alt="SCP Logo">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/SCP_Foundation_logo.svg/2560px-SCP_Foundation_logo.svg.png" alt="SCP Logo">
     <h1>SCP Foundation - Site Excalibur : O5 Council Terminal</h1>
   </header>
 
@@ -114,7 +114,7 @@
   </div>
 
 <!-- END OF PART 1 -->
-<!-- PART 2: LOGIN SCRIPT -->
+<!-- PART 2: LOGIN SEQUENCE & INITIAL INTERACTION -->
 <script>
   const authText = document.getElementById('auth-text');
   const passwordField = document.getElementById('password-field');
@@ -182,51 +182,47 @@
     typeBootLines();
   };
 </script>
+
 <!-- END OF PART 2 -->
-<!-- PART 3: COMMAND HANDLING & TERMINAL FILES -->
+<!-- PART 3: COMMAND HANDLING & FILE ACCESS -->
 <script>
+  // Command handling logic
   const commands = {
     'help': function() {
       printOutput("Available commands:");
       printOutput("help - Display this message.");
       printOutput("list - List available files.");
-      printOutput("scp - Access SCP-related documents.");
+      printOutput("scp - Access SCP-related classified documents.");
       printOutput("taskforce - View Task Force operations.");
       printOutput("redacted - Access Redacted/Secret files.");
-      printOutput("professor - View 'The Professor' files.");
       printOutput("exit - Exit the terminal.");
     },
     'list': function() {
       printOutput("Listing available files...");
       printOutput("SCP Directory - /scp");
       printOutput("Task Force Directory - /taskforce");
-      printOutput("Redacted Files - /redacted");
-      printOutput("Professor Files - /professor");
-      printOutput("Type 'scp', 'taskforce', 'redacted', or 'professor' followed by file number for access.");
+      printOutput("Redacted Files Directory - /redacted");
+      printOutput("Type 'scp', 'taskforce', or 'redacted' followed by file number for access.");
     },
     'scp': function() {
-      printOutput("Accessing SCP files...");
+      printOutput("Accessing SCP classified files...");
       printOutput("SCP-███ - [REDACTED]");
-      printOutput("SCP-████ - [CONFIDENTIAL]");
-      printOutput("SCP-█████ - [CLASSIFIED]");
+      printOutput("SCP-███ - [CLASSIFIED]");
+      printOutput("SCP-███ - [SECRET]");
+      printOutput("SCP-001 - [TOP SECRET]");
     },
     'taskforce': function() {
       printOutput("Accessing Task Force operation logs...");
       printOutput("TF-███ - Operation ████ - [SECRET]");
-      printOutput("TF-████ - Operation ████ - [RESTRICTED]");
-      printOutput("TF-█████ - Operation █████ - [CLASSIFIED]");
+      printOutput("TF-███ - Operation ████ - [RESTRICTED]");
+      printOutput("TF-███ - Operation ████ - [CLASSIFIED]");
     },
     'redacted': function() {
       printOutput("Accessing Redacted/Secret Files...");
       printOutput("File 001 - [REDACTED]");
       printOutput("File 002 - [CONFIDENTIAL]");
-      printOutput("File 003 - [CLASSIFIED]");
-    },
-    'professor': function() {
-      printOutput("Accessing 'The Professor' files...");
-      printOutput("Professor-██ - [REDACTED]");
-      printOutput("Professor-███ - [CONFIDENTIAL]");
-      printOutput("Professor-████ - [CLASSIFIED]");
+      printOutput("File 003 - [TOP SECRET]");
+      printOutput("File 004 - [CLASSIFIED]");
     },
     'exit': function() {
       printOutput("Exiting terminal...");
@@ -236,110 +232,7 @@
     }
   };
 
-  function handleCommand(command) {
-    if (commands[command]) {
-      commands[command]();
-    } else {
-      printOutput("Unknown command: " + command);
-      printOutput("Type 'help' for a list of available commands.");
-    }
-  }
-
-  inputLine.addEventListener('keydown', function(event) {
-    if (event.key === 'Enter') {
-      const command = inputLine.value.trim();
-      printOutput("&gt; " + command);
-      handleCommand(command);
-      inputLine.value = '';
-      inputLine.focus();
-    }
-  });
-</script>
-<!-- END OF PART 3 -->
-<!-- PART 4: TERMINAL ENHANCEMENTS & DATA SIMULATIONS -->
-<script>
-  // Simulate file access with a loading process
-  function simulateFileAccess(fileName, callback) {
-    printOutput("Accessing " + fileName + "...");
-    setTimeout(() => {
-      printOutput(fileName + " - [FILE LOADED]");
-      callback();
-    }, 2000);
-  }
-
-  // Modify the commands to simulate a loading process for each file type
-  const commands = {
-    'help': function() {
-      printOutput("Available commands:");
-      printOutput("help - Display this message.");
-      printOutput("list - List available files.");
-      printOutput("scp - Access SCP-related documents.");
-      printOutput("taskforce - View Task Force operations.");
-      printOutput("redacted - Access Redacted/Secret files.");
-      printOutput("professor - View 'The Professor' files.");
-      printOutput("exit - Exit the terminal.");
-    },
-    'list': function() {
-      printOutput("Listing available files...");
-      printOutput("SCP Directory - /scp");
-      printOutput("Task Force Directory - /taskforce");
-      printOutput("Redacted Files - /redacted");
-      printOutput("Professor Files - /professor");
-      printOutput("Type 'scp', 'taskforce', 'redacted', or 'professor' followed by file number for access.");
-    },
-    'scp': function() {
-      simulateFileAccess("SCP-███", () => {
-        printOutput("SCP-███ - [REDACTED]");
-      });
-      simulateFileAccess("SCP-████", () => {
-        printOutput("SCP-████ - [CONFIDENTIAL]");
-      });
-      simulateFileAccess("SCP-█████", () => {
-        printOutput("SCP-█████ - [CLASSIFIED]");
-      });
-    },
-    'taskforce': function() {
-      simulateFileAccess("TF-███ - Operation ████", () => {
-        printOutput("TF-███ - Operation ████ - [SECRET]");
-      });
-      simulateFileAccess("TF-████ - Operation ████", () => {
-        printOutput("TF-████ - Operation ████ - [RESTRICTED]");
-      });
-      simulateFileAccess("TF-█████ - Operation █████", () => {
-        printOutput("TF-█████ - Operation █████ - [CLASSIFIED]");
-      });
-    },
-    'redacted': function() {
-      simulateFileAccess("File 001", () => {
-        printOutput("File 001 - [REDACTED]");
-      });
-      simulateFileAccess("File 002", () => {
-        printOutput("File 002 - [CONFIDENTIAL]");
-      });
-      simulateFileAccess("File 003", () => {
-        printOutput("File 003 - [CLASSIFIED]");
-      });
-    },
-    'professor': function() {
-      simulateFileAccess("Professor-██", () => {
-        printOutput("Professor-██ - [REDACTED]");
-      });
-      simulateFileAccess("Professor-███", () => {
-        printOutput("Professor-███ - [CONFIDENTIAL]");
-      });
-      simulateFileAccess("Professor-████", () => {
-        printOutput("Professor-████ - [CLASSIFIED]");
-      });
-    },
-    'exit': function() {
-      printOutput("Exiting terminal...");
-      setTimeout(() => {
-        window.location.reload();
-      }, 1000);
-    }
-  };
-
-  // Modify the handleCommand function to simulate file loading before executing the command
+  // Function to handle commands entered by the user
   function handleCommand(command) {
     if (commands[command]) {
       commands[command]();
@@ -360,57 +253,190 @@
     }
   });
 </script>
-<!-- END OF PART 4 -->
-<!-- PART 5: FINAL TOUCHES & TERMINAL STYLING -->
-<style>
-  /* Enhancing the terminal look */
-  .terminal {
-    background-color: #111;
-    color: #0f0;
-    font-family: 'Courier New', Courier, monospace;
-    padding: 20px;
-    border-radius: 5px;
-    box-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
-    width: 100%;
-    max-width: 900px;
-    margin: 0 auto;
-    overflow-y: auto;
-  }
-  .output-line {
-    white-space: pre-wrap;
-    margin-bottom: 10px;
-    word-wrap: break-word;
-  }
-  .command-line {
-    display: flex;
-    margin-top: 10px;
-  }
-  .input-line {
-    flex: 1;
-    background-color: black;
-    color: #0f0;
-    border: 1px solid #0f0;
-    font-size: 1.2em;
-    padding: 10px;
-    border-radius: 5px;
-    outline: none;
-    text-align: left;
-  }
-  /* Animation for the terminal cursor */
-  @keyframes blink {
-    0% { border-right-color: transparent; }
-    50% { border-right-color: #0f0; }
-    100% { border-right-color: transparent; }
-  }
-  .input-line:focus {
-    animation: blink 1s step-end infinite;
-  }
-</style>
 
-<!-- END OF PART 5 -->
-<!-- PART 6: FINAL TERMINAL HANDLING & SCRIPT FINALIZATION -->
+<!-- END OF PART 3 -->
+<!-- PART 4: FILE ACCESS SIMULATION & ENHANCEMENTS -->
 <script>
-  // Function to print output to terminal
+  // Simulate file access with a loading process
+  function simulateFileAccess(fileName, callback) {
+    printOutput("Accessing " + fileName + "...");
+    setTimeout(() => {
+      printOutput(fileName + " - [FILE LOADED]");
+      callback();
+    }, 2000);  // Simulate a 2-second loading time for each file
+  }
+
+  // Modified commands to simulate loading for each file type
+  const commands = {
+    'help': function() {
+      printOutput("Available commands:");
+      printOutput("help - Display this message.");
+      printOutput("list - List available files.");
+      printOutput("scp - Access SCP-related classified documents.");
+      printOutput("taskforce - View Task Force operations.");
+      printOutput("redacted - Access Redacted/Secret files.");
+      printOutput("exit - Exit the terminal.");
+    },
+    'list': function() {
+      printOutput("Listing available files...");
+      printOutput("SCP Directory - /scp");
+      printOutput("Task Force Directory - /taskforce");
+      printOutput("Redacted Files Directory - /redacted");
+      printOutput("Type 'scp', 'taskforce', or 'redacted' followed by file number for access.");
+    },
+    'scp': function() {
+      simulateFileAccess("SCP-███", () => {
+        printOutput("SCP-███ - [REDACTED]");
+      });
+      simulateFileAccess("SCP-████", () => {
+        printOutput("SCP-████ - [CLASSIFIED]");
+      });
+      simulateFileAccess("SCP-█████", () => {
+        printOutput("SCP-█████ - [SECRET]");
+      });
+      simulateFileAccess("SCP-001", () => {
+        printOutput("SCP-001 - [TOP SECRET]");
+      });
+    },
+    'taskforce': function() {
+      simulateFileAccess("TF-███ - Operation ████", () => {
+        printOutput("TF-███ - Operation ████ - [SECRET]");
+      });
+      simulateFileAccess("TF-████ - Operation ████", () => {
+        printOutput("TF-████ - Operation ████ - [RESTRICTED]");
+      });
+      simulateFileAccess("TF-█████ - Operation █████", () => {
+        printOutput("TF-█████ - Operation █████ - [CLASSIFIED]");
+      });
+    },
+    'redacted': function() {
+      simulateFileAccess("File 001 - [REDACTED]", () => {
+        printOutput("File 001 - [REDACTED]");
+      });
+      simulateFileAccess("File 002 - [CONFIDENTIAL]", () => {
+        printOutput("File 002 - [CONFIDENTIAL]");
+      });
+      simulateFileAccess("File 003 - [TOP SECRET]", () => {
+        printOutput("File 003 - [TOP SECRET]");
+      });
+      simulateFileAccess("File 004 - [CLASSIFIED]", () => {
+        printOutput("File 004 - [CLASSIFIED]");
+      });
+    },
+    'exit': function() {
+      printOutput("Exiting terminal...");
+      setTimeout(() => {
+        window.location.reload();
+      }, 1000);
+    }
+  };
+
+  // Modified function to handle commands with file loading simulation
+  function handleCommand(command) {
+    if (commands[command]) {
+      commands[command]();
+    } else {
+      printOutput("Unknown command: " + command);
+      printOutput("Type 'help' for a list of available commands.");
+    }
+  }
+
+  // Event listener for user input in the terminal
+  inputLine.addEventListener('keydown', function(event) {
+    if (event.key === 'Enter') {
+      const command = inputLine.value.trim();
+      printOutput("&gt; " + command);
+      handleCommand(command);
+      inputLine.value = '';
+      inputLine.focus();
+    }
+  });
+</script>
+
+<!-- END OF PART 4 -->
+<!-- PART 5: LOADING ANIMATION & ADVANCED COMMANDS -->
+<script>
+  // Loading spinner function to simulate data retrieval
+  function showLoadingAnimation() {
+    const loadingText = document.createElement('div');
+    loadingText.classList.add('loading-text');
+    loadingText.textContent = "Loading... Please wait.";
+    terminalOutput.appendChild(loadingText);
+
+    // Create spinner
+    const spinner = document.createElement('div');
+    spinner.classList.add('spinner');
+    terminalOutput.appendChild(spinner);
+  }
+
+  // Hide loading animation after file is "loaded"
+  function hideLoadingAnimation() {
+    const loadingText = document.querySelector('.loading-text');
+    const spinner = document.querySelector('.spinner');
+    if (loadingText) loadingText.remove();
+    if (spinner) spinner.remove();
+  }
+
+  // Enhanced file access simulation with loading spinner
+  function simulateFileAccessWithSpinner(fileName, callback) {
+    showLoadingAnimation();
+    setTimeout(() => {
+      hideLoadingAnimation();
+      printOutput(fileName + " - [FILE LOADED]");
+      callback();
+    }, 3000); // Adjust to simulate file access time
+  }
+
+  // Extend the 'scp', 'taskforce', and 'redacted' commands with the spinner effect
+  const commands = {
+    'scp': function() {
+      simulateFileAccessWithSpinner("SCP-███", () => {
+        printOutput("SCP-███ - [REDACTED]");
+      });
+      simulateFileAccessWithSpinner("SCP-████", () => {
+        printOutput("SCP-████ - [CLASSIFIED]");
+      });
+      simulateFileAccessWithSpinner("SCP-█████", () => {
+        printOutput("SCP-█████ - [SECRET]");
+      });
+      simulateFileAccessWithSpinner("SCP-001 - The Scarlet King", () => {
+        printOutput("SCP-001 - The Scarlet King - [TOP SECRET]");
+      });
+    },
+    'taskforce': function() {
+      simulateFileAccessWithSpinner("TF-███ - Operation ████", () => {
+        printOutput("TF-███ - Operation ████ - [SECRET]");
+      });
+      simulateFileAccessWithSpinner("TF-████ - Operation ████", () => {
+        printOutput("TF-████ - Operation ████ - [RESTRICTED]");
+      });
+      simulateFileAccessWithSpinner("TF-█████ - Operation █████", () => {
+        printOutput("TF-█████ - Operation █████ - [CLASSIFIED]");
+      });
+    },
+    'redacted': function() {
+      simulateFileAccessWithSpinner("File 001 - [REDACTED]", () => {
+        printOutput("File 001 - [REDACTED]");
+      });
+      simulateFileAccessWithSpinner("File 002 - [CONFIDENTIAL]", () => {
+        printOutput("File 002 - [CONFIDENTIAL]");
+      });
+      simulateFileAccessWithSpinner("File 003 - [TOP SECRET]", () => {
+        printOutput("File 003 - [TOP SECRET]");
+      });
+      simulateFileAccessWithSpinner("File 004 - [CLASSIFIED]", () => {
+        printOutput("File 004 - [CLASSIFIED]");
+      });
+    },
+    'exit': function() {
+      printOutput("Exiting terminal...");
+      setTimeout(() => {
+        window.location.reload();
+      }, 1000);
+    }
+  };
+
+  // Enhance file loading experience with a dynamic spinner and text
   function printOutput(text) {
     const line = document.createElement('div');
     line.className = 'output-line';
@@ -419,68 +445,127 @@
     terminalOutput.scrollTop = terminalOutput.scrollHeight;
   }
 
-  // Add error handling to terminal commands
+  // Event listener to handle user input and execute commands
+  inputLine.addEventListener('keydown', function(event) {
+    if (event.key === 'Enter') {
+      const command = inputLine.value.trim();
+      printOutput("&gt; " + command);
+      handleCommand(command);
+      inputLine.value = '';
+      inputLine.focus();
+    }
+  });
+</script>
+
+<style>
+  /* Add custom spinner animation */
+  .spinner {
+    border: 4px solid transparent;
+    border-top: 4px solid #0f0;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    animation: spin 1s linear infinite;
+  }
+
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+
+  .loading-text {
+    color: #0f0;
+    font-size: 1.2em;
+    margin-top: 20px;
+  }
+</style>
+
+<!-- END OF PART 5 -->
+<!-- PART 6: HELP SYSTEM & DYNAMIC COMMAND SUGGESTIONS -->
+<script>
+  // Create a dynamic suggestion list for user input
+  function showSuggestions(query) {
+    const suggestions = getSuggestions(query);
+    const suggestionContainer = document.createElement('div');
+    suggestionContainer.classList.add('suggestions');
+
+    suggestions.forEach((suggestion) => {
+      const suggestionItem = document.createElement('div');
+      suggestionItem.classList.add('suggestion-item');
+      suggestionItem.textContent = suggestion;
+      suggestionItem.addEventListener('click', () => {
+        inputLine.value = suggestion;
+        handleCommand(suggestion);
+      });
+      suggestionContainer.appendChild(suggestionItem);
+    });
+
+    terminalOutput.appendChild(suggestionContainer);
+    terminalOutput.scrollTop = terminalOutput.scrollHeight;
+  }
+
+  // Get suggestions based on user input
+  function getSuggestions(query) {
+    const allCommands = ['help', 'list', 'scp', 'taskforce', 'redacted', 'exit'];
+    return allCommands.filter(command => command.startsWith(query));
+  }
+
+  // Display the help message
+  function showHelp() {
+    printOutput("Welcome to the O5 Council Terminal.");
+    printOutput("Available commands include:");
+    printOutput("help - Show this help message.");
+    printOutput("list - List available classified files.");
+    printOutput("scp - Access SCP-related documents.");
+    printOutput("taskforce - View Task Force operations.");
+    printOutput("redacted - Access redacted or classified files.");
+    printOutput("exit - Exit the terminal.");
+    printOutput("Type 'list' to view file directories or 'scp' to access files.");
+  }
+
+  // Override the 'help' command to show an enhanced help system
   const commands = {
     'help': function() {
-      printOutput("Available commands:");
-      printOutput("help - Display this message.");
-      printOutput("list - List available files.");
-      printOutput("scp - Access SCP-related documents.");
-      printOutput("taskforce - View Task Force operations.");
-      printOutput("redacted - Access Redacted/Secret files.");
-      printOutput("professor - Access 'The Professor' files.");
-      printOutput("exit - Exit the terminal.");
+      showHelp();
     },
     'list': function() {
-      printOutput("Listing available files...");
-      printOutput("SCP Directory - /scp");
-      printOutput("Task Force Directory - /taskforce");
-      printOutput("Redacted Files - /redacted");
-      printOutput("Professor Files - /professor");
-      printOutput("Type 'scp', 'taskforce', 'redacted', or 'professor' followed by file number for access.");
+      printOutput("Listing classified directories...");
+      printOutput("/scp - SCP-related files");
+      printOutput("/taskforce - Task Force operation files");
+      printOutput("/redacted - Redacted files");
+      printOutput("Type 'scp' to access SCP files or 'taskforce' for task force operations.");
     },
     'scp': function() {
-      simulateFileAccess("SCP-███", () => {
+      simulateFileAccessWithSpinner("SCP-███", () => {
         printOutput("SCP-███ - [REDACTED]");
       });
-      simulateFileAccess("SCP-████", () => {
-        printOutput("SCP-████ - [CONFIDENTIAL]");
+      simulateFileAccessWithSpinner("SCP-████", () => {
+        printOutput("SCP-████ - [CLASSIFIED]");
       });
-      simulateFileAccess("SCP-█████", () => {
-        printOutput("SCP-█████ - [CLASSIFIED]");
+      simulateFileAccessWithSpinner("SCP-001 - The Scarlet King", () => {
+        printOutput("SCP-001 - The Scarlet King - [TOP SECRET]");
       });
     },
     'taskforce': function() {
-      simulateFileAccess("TF-███ - Operation ████", () => {
+      simulateFileAccessWithSpinner("TF-███ - Operation ████", () => {
         printOutput("TF-███ - Operation ████ - [SECRET]");
       });
-      simulateFileAccess("TF-████ - Operation ████", () => {
+      simulateFileAccessWithSpinner("TF-████ - Operation ████", () => {
         printOutput("TF-████ - Operation ████ - [RESTRICTED]");
       });
-      simulateFileAccess("TF-█████ - Operation █████", () => {
+      simulateFileAccessWithSpinner("TF-█████ - Operation █████", () => {
         printOutput("TF-█████ - Operation █████ - [CLASSIFIED]");
       });
     },
     'redacted': function() {
-      simulateFileAccess("File 001", () => {
+      simulateFileAccessWithSpinner("File 001 - [REDACTED]", () => {
         printOutput("File 001 - [REDACTED]");
       });
-      simulateFileAccess("File 002", () => {
+      simulateFileAccessWithSpinner("File 002 - [CONFIDENTIAL]", () => {
         printOutput("File 002 - [CONFIDENTIAL]");
       });
-      simulateFileAccess("File 003", () => {
-        printOutput("File 003 - [CLASSIFIED]");
-      });
-    },
-    'professor': function() {
-      simulateFileAccess("The Professor - File A", () => {
-        printOutput("The Professor - File A - [SECRET]");
-      });
-      simulateFileAccess("The Professor - File B", () => {
-        printOutput("The Professor - File B - [TOP SECRET]");
-      });
-      simulateFileAccess("The Professor - File C", () => {
-        printOutput("The Professor - File C - [CLASSIFIED]");
+      simulateFileAccessWithSpinner("File 003 - [TOP SECRET]", () => {
+        printOutput("File 003 - [TOP SECRET]");
       });
     },
     'exit': function() {
@@ -491,7 +576,302 @@
     }
   };
 
-  // Handle unknown commands
+  // Update the terminal to handle dynamic suggestions while typing
+  inputLine.addEventListener('input', function(event) {
+    const query = inputLine.value.trim();
+    if (query.length > 0) {
+      showSuggestions(query);
+    }
+  });
+
+  // Ensure suggestions are cleared when the user submits the command
+  inputLine.addEventListener('keydown', function(event) {
+    if (event.key === 'Enter') {
+      const command = inputLine.value.trim();
+      printOutput("&gt; " + command);
+      handleCommand(command);
+      inputLine.value = '';
+      inputLine.focus();
+      const suggestions = document.querySelector('.suggestions');
+      if (suggestions) {
+        suggestions.remove();
+      }
+    }
+  });
+</script>
+
+<style>
+  /* Style for dynamic command suggestions */
+  .suggestions {
+    position: absolute;
+    background: #111;
+    border: 1px solid #0f0;
+    width: 300px;
+    max-height: 150px;
+    overflow-y: auto;
+    top: 70px;
+    left: 20px;
+    z-index: 10;
+  }
+
+  .suggestion-item {
+    padding: 5px;
+    color: #0f0;
+    cursor: pointer;
+  }
+
+  .suggestion-item:hover {
+    background-color: #222;
+  }
+</style>
+
+<!-- END OF PART 6 -->
+<!-- PART 7: FILE ACCESS SIMULATION & CUSTOMIZED FILE INTERACTIONS -->
+<script>
+  // Simulate file access with delay and handle custom messages for each file
+  function simulateFileAccessWithSpinner(fileName, callback) {
+    printOutput("Accessing " + fileName + "...");
+    showSpinner(true);
+    setTimeout(() => {
+      printOutput(fileName + " - [FILE LOADED]");
+      showSpinner(false);
+      callback();
+    }, 3000); // Simulated delay for file access
+  }
+
+  // Function to show or hide a loading spinner
+  function showSpinner(show) {
+    const spinner = document.getElementById('loading-spinner');
+    if (show) {
+      spinner.style.display = 'block';
+    } else {
+      spinner.style.display = 'none';
+    }
+  }
+
+  // Add customized access for specific classified files
+  function accessClassifiedFile(fileName) {
+    if (fileName === "SCP-001 - The Scarlet King") {
+      printOutput("Warning: Unauthorized access to SCP-001 detected.");
+      printOutput("File access restricted to Level-███ clearance.");
+      printOutput("Access denied.");
+    } else if (fileName === "SCP-███") {
+      printOutput("File access granted: [REDACTED]...");
+      printOutput("Do not distribute.");
+    } else if (fileName === "TF-█████ - Operation █████") {
+      printOutput("Operation █████ is classified under 'O5'.");
+      printOutput("Highly sensitive information. Proceed with caution.");
+    } else {
+      printOutput(fileName + " is available for viewing.");
+    }
+  }
+
+  // Add a 'top secret' file category for special access
+  const commands = {
+    'help': function() {
+      printOutput("Available commands:");
+      printOutput("help - Show this message.");
+      printOutput("list - List available files.");
+      printOutput("scp - Access SCP-related documents.");
+      printOutput("taskforce - View Task Force operations.");
+      printOutput("redacted - Access redacted or classified files.");
+      printOutput("exit - Exit the terminal.");
+      printOutput("Type 'scp' or 'redacted' to access files.");
+    },
+    'list': function() {
+      printOutput("Listing available directories...");
+      printOutput("/scp - SCP-related files");
+      printOutput("/taskforce - Task Force operations");
+      printOutput("/redacted - Redacted files");
+      printOutput("Type 'scp', 'taskforce', or 'redacted' followed by the file number.");
+    },
+    'scp': function() {
+      simulateFileAccessWithSpinner("SCP-███", () => {
+        accessClassifiedFile("SCP-███");
+      });
+      simulateFileAccessWithSpinner("SCP-████", () => {
+        accessClassifiedFile("SCP-████");
+      });
+      simulateFileAccessWithSpinner("SCP-001 - The Scarlet King", () => {
+        accessClassifiedFile("SCP-001 - The Scarlet King");
+      });
+    },
+    'taskforce': function() {
+      simulateFileAccessWithSpinner("TF-███ - Operation ████", () => {
+        printOutput("TF-███ - Operation ████ - [SECRET]");
+      });
+      simulateFileAccessWithSpinner("TF-████ - Operation ████", () => {
+        printOutput("TF-████ - Operation ████ - [RESTRICTED]");
+      });
+      simulateFileAccessWithSpinner("TF-█████ - Operation █████", () => {
+        printOutput("TF-█████ - Operation █████ - [CLASSIFIED]");
+      });
+    },
+    'redacted': function() {
+      simulateFileAccessWithSpinner("File 001 - [REDACTED]", () => {
+        printOutput("File 001 - [REDACTED] - Access is limited.");
+      });
+      simulateFileAccessWithSpinner("File 002 - [CONFIDENTIAL]", () => {
+        printOutput("File 002 - [CONFIDENTIAL]");
+      });
+      simulateFileAccessWithSpinner("File 003 - [TOP SECRET]", () => {
+        printOutput("File 003 - [TOP SECRET] - Restricted to O5-Council.");
+      });
+    },
+    'exit': function() {
+      printOutput("Exiting terminal...");
+      setTimeout(() => {
+        window.location.reload();
+      }, 1000);
+    }
+  };
+
+  // Event listener for handling command execution
+  inputLine.addEventListener('keydown', function(event) {
+    if (event.key === 'Enter') {
+      const command = inputLine.value.trim();
+      printOutput("&gt; " + command);
+      handleCommand(command);
+      inputLine.value = '';
+      inputLine.focus();
+    }
+  });
+
+  // Handle the command execution
+  function handleCommand(command) {
+    if (commands[command]) {
+      commands[command]();
+    } else {
+      printOutput("Unknown command: " + command);
+      printOutput("Type 'help' for a list of available commands.");
+    }
+  }
+</script>
+
+<style>
+  /* Add a loading spinner for file access */
+  #loading-spinner {
+    display: none;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 50px;
+    height: 50px;
+    border: 6px solid #f3f3f3;
+    border-top: 6px solid #0f0;
+    border-radius: 50%;
+    animation: spin 2s linear infinite;
+  }
+
+  /* Keyframes for spinner animation */
+  @keyframes spin {
+    0% { transform: translate(-50%, -50%) rotate(0deg); }
+    100% { transform: translate(-50%, -50%) rotate(360deg); }
+  }
+</style>
+
+<!-- END OF PART 7 -->
+<!-- PART 8: ADVANCED FILE ACCESS SIMULATION & CLEARANCE LEVELS -->
+<script>
+  // Function to simulate file access based on clearance level
+  function simulateAccessBasedOnClearance(fileName, clearanceLevel, callback) {
+    printOutput("Attempting to access: " + fileName);
+    if (clearanceLevel < 5) { // Assuming level 5 is required for most classified files
+      printOutput("ACCESS DENIED: Insufficient clearance.");
+      printOutput("Current clearance: Level " + clearanceLevel + " - Minimum required: Level 5");
+    } else {
+      showSpinner(true);
+      setTimeout(() => {
+        printOutput(fileName + " - [ACCESS GRANTED]");
+        showSpinner(false);
+        callback();
+      }, 4000); // Simulated delay for higher-level access
+    }
+  }
+
+  // Function to handle advanced access messages based on file category
+  function handleFileCategory(fileName) {
+    switch(fileName) {
+      case "SCP-001 - The Scarlet King":
+        printOutput("File access granted. Warning: Scarlet King's influence is unstable.");
+        printOutput("Highly volatile. Restricted protocols in effect.");
+        break;
+      case "SCP-██████ - The Gatekeeper":
+        printOutput("Gatekeeper protocol: Restricted access. The entity is highly unpredictable.");
+        printOutput("Security breach imminent if not handled by authorized personnel.");
+        break;
+      case "SCP-███ - [REDACTED]":
+        printOutput("File classified. Access granted with temporary clearance.");
+        break;
+      case "TF-█████ - Operation █████":
+        printOutput("Operation ██-███: Classified. Initiating briefing report for O5-Council.");
+        break;
+      default:
+        printOutput(fileName + " - Available for viewing.");
+    }
+  }
+
+  // Adding new files and improving clearance requirements for each category
+  const commands = {
+    'help': function() {
+      printOutput("Available commands:");
+      printOutput("help - Show this message.");
+      printOutput("list - List available files.");
+      printOutput("scp - Access SCP-related documents.");
+      printOutput("taskforce - View Task Force operations.");
+      printOutput("redacted - Access redacted or classified files.");
+      printOutput("exit - Exit the terminal.");
+    },
+    'list': function() {
+      printOutput("Listing available directories...");
+      printOutput("/scp - SCP-related files");
+      printOutput("/taskforce - Task Force operations");
+      printOutput("/redacted - Redacted files");
+      printOutput("Type 'scp', 'taskforce', or 'redacted' followed by the file number.");
+    },
+    'scp': function() {
+      const clearanceLevel = 5; // Adjust for demonstration, this would come from the user session in a full system
+      simulateAccessBasedOnClearance("SCP-███", clearanceLevel, () => {
+        handleFileCategory("SCP-███");
+      });
+      simulateAccessBasedOnClearance("SCP-██████ - The Gatekeeper", clearanceLevel, () => {
+        handleFileCategory("SCP-██████ - The Gatekeeper");
+      });
+      simulateAccessBasedOnClearance("SCP-001 - The Scarlet King", clearanceLevel, () => {
+        handleFileCategory("SCP-001 - The Scarlet King");
+      });
+    },
+    'taskforce': function() {
+      const clearanceLevel = 5;
+      simulateAccessBasedOnClearance("TF-█████ - Operation █████", clearanceLevel, () => {
+        handleFileCategory("TF-█████ - Operation █████");
+      });
+      simulateAccessBasedOnClearance("TF-███ - Operation ████", clearanceLevel, () => {
+        printOutput("TF-███ - Operation ████ - [SECRET]");
+      });
+    },
+    'redacted': function() {
+      const clearanceLevel = 5;
+      simulateAccessBasedOnClearance("File 001 - [REDACTED]", clearanceLevel, () => {
+        printOutput("File 001 - [REDACTED] - Access restricted to O5-Council.");
+      });
+      simulateAccessBasedOnClearance("File 002 - [CONFIDENTIAL]", clearanceLevel, () => {
+        printOutput("File 002 - [CONFIDENTIAL]");
+      });
+      simulateAccessBasedOnClearance("File 003 - [TOP SECRET]", clearanceLevel, () => {
+        printOutput("File 003 - [TOP SECRET] - Restricted to O5-Council.");
+      });
+    },
+    'exit': function() {
+      printOutput("Exiting terminal...");
+      setTimeout(() => {
+        window.location.reload();
+      }, 1000);
+    }
+  };
+
+  // Handle command execution
   function handleCommand(command) {
     if (commands[command]) {
       commands[command]();
@@ -513,6 +893,169 @@
   });
 </script>
 
+<style>
+  /* Loading spinner styles */
+  #loading-spinner {
+    display: none;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 50px;
+    height: 50px;
+    border: 6px solid #f3f3f3;
+    border-top: 6px solid #0f0;
+    border-radius: 50%;
+    animation: spin 2s linear infinite;
+  }
+
+  /* Spinner animation */
+  @keyframes spin {
+    0% { transform: translate(-50%, -50%) rotate(0deg); }
+    100% { transform: translate(-50%, -50%) rotate(360deg); }
+  }
+</style>
+
+<!-- END OF PART 8 -->
+<!-- PART 9: FINALIZING TERMINAL INTERFACE AND EXIT FUNCTIONALITY -->
+<script>
+  // Function to finalize the terminal shutdown and reset everything
+  function finalizeExit() {
+    printOutput("Shutting down O5 Council terminal...");
+    setTimeout(() => {
+      printOutput("System reset in 3... 2... 1...");
+      setTimeout(() => {
+        window.location.reload(); // Reload the page to simulate terminal reboot
+      }, 1000);
+    }, 2000);
+  }
+
+  // Adding a confirmation prompt when exiting
+  function confirmExit() {
+    printOutput("Are you sure you want to exit the terminal? (Y/N)");
+    inputLine.addEventListener('keydown', function(event) {
+      if (event.key === 'Enter') {
+        const command = inputLine.value.trim().toLowerCase();
+        if (command === 'y') {
+          finalizeExit();
+        } else if (command === 'n') {
+          printOutput("Exit cancelled.");
+        } else {
+          printOutput("Invalid option. Please type 'Y' for yes or 'N' for no.");
+        }
+        inputLine.value = '';
+        inputLine.focus();
+      }
+    });
+  }
+
+  // Improve the exit functionality to prompt before shutdown
+  const commands = {
+    'help': function() {
+      printOutput("Available commands:");
+      printOutput("help - Display this message.");
+      printOutput("list - List available files.");
+      printOutput("scp - Access SCP-related documents.");
+      printOutput("taskforce - View Task Force operations.");
+      printOutput("redacted - Access Redacted/Secret files.");
+      printOutput("exit - Exit the terminal.");
+    },
+    'list': function() {
+      printOutput("Listing available files...");
+      printOutput("/scp - SCP-related files");
+      printOutput("/taskforce - Task Force operations");
+      printOutput("/redacted - Redacted files");
+      printOutput("Type 'scp', 'taskforce', or 'redacted' followed by the file number.");
+    },
+    'scp': function() {
+      const clearanceLevel = 5; // For this demonstration, let's assume the user has level 5 clearance
+      simulateAccessBasedOnClearance("SCP-███", clearanceLevel, () => {
+        handleFileCategory("SCP-███");
+      });
+      simulateAccessBasedOnClearance("SCP-██████ - The Gatekeeper", clearanceLevel, () => {
+        handleFileCategory("SCP-██████ - The Gatekeeper");
+      });
+      simulateAccessBasedOnClearance("SCP-001 - The Scarlet King", clearanceLevel, () => {
+        handleFileCategory("SCP-001 - The Scarlet King");
+      });
+    },
+    'taskforce': function() {
+      const clearanceLevel = 5;
+      simulateAccessBasedOnClearance("TF-█████ - Operation █████", clearanceLevel, () => {
+        handleFileCategory("TF-█████ - Operation █████");
+      });
+      simulateAccessBasedOnClearance("TF-███ - Operation ████", clearanceLevel, () => {
+        printOutput("TF-███ - Operation ████ - [SECRET]");
+      });
+    },
+    'redacted': function() {
+      const clearanceLevel = 5;
+      simulateAccessBasedOnClearance("File 001 - [REDACTED]", clearanceLevel, () => {
+        printOutput("File 001 - [REDACTED] - Access restricted to O5-Council.");
+      });
+      simulateAccessBasedOnClearance("File 002 - [CONFIDENTIAL]", clearanceLevel, () => {
+        printOutput("File 002 - [CONFIDENTIAL]");
+      });
+      simulateAccessBasedOnClearance("File 003 - [TOP SECRET]", clearanceLevel, () => {
+        printOutput("File 003 - [TOP SECRET] - Restricted to O5-Council.");
+      });
+    },
+    'exit': function() {
+      confirmExit(); // Call the confirmation function before shutting down
+    }
+  };
+
+  // Handle the command input from the user
+  function handleCommand(command) {
+    if (commands[command]) {
+      commands[command]();
+    } else {
+      printOutput("Unknown command: " + command);
+      printOutput("Type 'help' for a list of available commands.");
+    }
+  }
+
+  // Event listener for command input
+  inputLine.addEventListener('keydown', function(event) {
+    if (event.key === 'Enter') {
+      const command = inputLine.value.trim();
+      printOutput("&gt; " + command);
+      handleCommand(command);
+      inputLine.value = '';
+      inputLine.focus();
+    }
+  });
+</script>
+
+<style>
+  /* Loading spinner styles */
+  #loading-spinner {
+    display: none;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 50px;
+    height: 50px;
+    border: 6px solid #f3f3f3;
+    border-top: 6px solid #0f0;
+    border-radius: 50%;
+    animation: spin 2s linear infinite;
+  }
+
+  /* Spinner animation */
+  @keyframes spin {
+    0% { transform: translate(-50%, -50%) rotate(0deg); }
+    100% { transform: translate(-50%, -50%) rotate(360deg); }
+  }
+
+  /* Confirmation prompt styles */
+  .confirmation-prompt {
+    font-size: 1.1em;
+    color: #ffcc00;
+  }
+</style>
+
+<!-- END OF PART 9 -->
 </body>
 </html>
-<!-- END OF PART 6 -->
